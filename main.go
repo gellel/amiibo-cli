@@ -43,6 +43,9 @@ const (
 )
 
 var (
+	errNotPtr = errors.New("v is not pointer")
+)
+var (
 	errBNil = errors.New("*b is nil")
 )
 var (

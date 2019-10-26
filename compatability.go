@@ -37,6 +37,10 @@ func fillCompatability(c *compatability) *compatability {
 	return c
 }
 
+func marshalCompatability(c *compatability) (*[]byte, error) {
+	return marshalB(c)
+}
+
 func unmarshalCompatability(b *[]byte) (*compatability, error) {
 	var (
 		c   compatability

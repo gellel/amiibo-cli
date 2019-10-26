@@ -34,6 +34,10 @@ func fillLineup(c *lineup) *lineup {
 	return c
 }
 
+func marhsalLineup(l *lineup) (*[]byte, error) {
+	return marshalB(l)
+}
+
 func unmarshalLineup(b *[]byte) (*lineup, error) {
 	var (
 		c   lineup
