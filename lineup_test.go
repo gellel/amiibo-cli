@@ -1,10 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestLineup(t *testing.T) {
-	fmt.Println(getLineup())
+	var (
+		l, err = getLineup()
+	)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	tableLineup(w, l)
 }

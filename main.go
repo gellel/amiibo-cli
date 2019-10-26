@@ -1,6 +1,10 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"os"
+	"text/tabwriter"
+)
 
 const (
 	amiiboDetailURL string = amiiboURL + "/" + "detail"
@@ -27,7 +31,7 @@ const (
 )
 
 const (
-	lineupURI string = contentURI + "/" + "amiibo/line-up/jcr:content/root/responsivegrid/lineup.model.json"
+	lineupURI string = contentURI + "/" + "/line-up/jcr:content/root/responsivegrid/lineup.model.json"
 )
 
 const (
@@ -43,13 +47,19 @@ const (
 )
 
 var (
-	errNotPtr = errors.New("v is not pointer")
+	errBNil = errors.New("*[]byte is nil")
 )
+
 var (
-	errBNil = errors.New("*b is nil")
+	errBEmpty = errors.New("*[]byte is empty")
 )
+
 var (
-	errBEmpty = errors.New("*b is empty")
+	errNotPtr = errors.New("interface{} is not a uintptr")
+)
+
+var (
+	w = tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', tabwriter.Debug)
 )
 
 func main() {}
