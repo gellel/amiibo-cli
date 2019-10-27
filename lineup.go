@@ -40,17 +40,20 @@ func marshalLineup(l *lineup) (*[]byte, error) {
 }
 
 func tableLineup(w *tabwriter.Writer, l *lineup) error {
-	const ()
+	const (
+		aLine string = "amiibo\t%d"
+		iLine string = "items\t%d"
+	)
 	var (
 		err error
 		ok  bool
 	)
-	_, err = fmt.Fprintln(w, fmt.Sprintf("amiibo\t%d", len(l.Amiibo)))
+	_, err = fmt.Fprintln(w, fmt.Sprintf(aLine, len(l.Amiibo)))
 	ok = (err == nil)
 	if !ok {
 		return err
 	}
-	_, err = fmt.Fprintln(w, fmt.Sprintf("items\t%d", len(l.Items)))
+	_, err = fmt.Fprintln(w, fmt.Sprintf(iLine, len(l.Items)))
 	ok = (err == nil)
 	if !ok {
 		return err

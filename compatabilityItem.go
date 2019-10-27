@@ -15,22 +15,12 @@ type compatabilityItem struct {
 
 func tableCompatabilityItem(w *tabwriter.Writer, c *compatabilityItem) error {
 	var (
-		err error
-		ok  bool
-
-		x = []string{
+		x = &[]string{
 			fmt.Sprintf("description\t%s", c.Description),
 			fmt.Sprintf("last modified\t%d", c.LastModified),
 			fmt.Sprintf("path\t%s", c.Path),
 			fmt.Sprintf("title\t%s", c.Title),
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
-	for i, s := range x {
-		_, err = fmt.Fprintln(w, fmt.Sprintf("%d\t%s", i, s))
-		ok = (err == nil)
-		if !ok {
-			return err
-		}
-	}
-	return w.Flush()
+	return table(w, x)
 }

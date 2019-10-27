@@ -1,11 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestCompatability(t *testing.T) {
-
-	fmt.Println(getCompatability())
+	c, err := getCompatability()
+	if err != nil {
+		panic(err)
+	}
+	tableCompatability(w, c)
+	tableCompatabilityAmiibo(w, c.Amiibo[0])
+	tableCompatabilityItem(w, c.Items[0])
 }
