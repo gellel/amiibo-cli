@@ -46,6 +46,10 @@ const (
 	nintendoURL string = "https://" + nintendoTLD
 )
 
+const (
+	writeMode os.FileMode = 0777
+)
+
 var (
 	errBNil = errors.New("*[]byte is nil")
 )
