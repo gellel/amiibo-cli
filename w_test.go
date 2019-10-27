@@ -5,17 +5,24 @@ import (
 )
 
 func TestW(t *testing.T) {
+	const (
+		folder string = ".amiibo-cli-test"
+	)
 	var (
 		d, err = userHomeDir()
 	)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	err = makeDir(d, "amiibo-cli-test")
+	err = makeDir(d, folder)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	err = delDir(d, "amiibo-cli-test")
+	err = makeFile(d, folder, "test", "txt", &[]byte{})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	err = delDirAll(d, folder)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

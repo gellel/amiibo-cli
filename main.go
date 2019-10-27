@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"text/tabwriter"
 )
@@ -59,7 +60,15 @@ var (
 )
 
 var (
+	errNotDir = errors.New("p is not a directory")
+)
+
+var (
 	errNotPtr = errors.New("interface{} is not a uintptr")
+)
+
+var (
+	errNoUserHomeDir = fmt.Errorf("cannot find home directory for user")
 )
 
 var (
