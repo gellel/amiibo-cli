@@ -1,21 +1,17 @@
 package main
 
-import (
-	"fmt"
-	"text/tabwriter"
-)
+import "os"
 
-func table(w *tabwriter.Writer, rows *[]string) error {
+func hasDir(fullpath string) bool {
+	return (hasNotDir(fullpath) == false)
+}
+
+func hasNotDir(fullpath string) bool {
 	var (
 		err error
-		ok  bool
 	)
-	for i, s := range *rows {
-		_, err = fmt.Fprintln(w, fmt.Sprintf("%d\t%s", i, s))
-		ok = (err == nil)
-		if !ok {
-			return err
-		}
-	}
-	return w.Flush()
+	_, err = os.Stat(fullpath)
+	return os.IsNotExist(err)
 }
+
+func makeDir(fullpath, folder string) {}
