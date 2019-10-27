@@ -43,8 +43,50 @@ func getMix() (*mix, error) {
 	return newMix(c, l)
 }
 
-func intersectionMixAmiibo(m *mix) {
-	var ()
+func intersectionMixAmiibo(m *mix) sync.Map {
+	var (
+		mu sync.Map
+		wg sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for _, c := range m.CompatabilityAmiibo {
+			syncMuKeyCount(&mu, c.URL)
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for _, c := range m.LineupAmiibo {
+			syncMuKeyCount(&mu, c.DetailsURL)
+		}
+	}()
+	wg.Wait()
+	return mu
+}
+
+func intersectionMixItems(m *mix) sync.Map {
+	var (
+		mu sync.Map
+		wg sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for _, c := range m.CompatabilityItem {
+			syncMuKeyCount(&mu, c.URL)
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for _, c := range m.LineupItem {
+			syncMuKeyCount(&mu, c.URL)
+		}
+	}()
+	wg.Wait()
+	return mu
 }
 
 func newMix(c *compatability, l *lineup) (*mix, error) {
