@@ -40,30 +40,14 @@ func marshalLineup(l *lineup) (*[]byte, error) {
 }
 
 func tableLineup(w *tabwriter.Writer, l *lineup) error {
-	const (
-		aLine string = "amiibo\t%d"
-		iLine string = "items\t%d"
-	)
 	var (
-		err error
-		ok  bool
+		x = &[]string{
+			fmt.Sprintf("amiibo (n)\t%d", len(l.Amiibo)),
+			fmt.Sprintf("component path\t%s", l.ComponentPath),
+			fmt.Sprintf("date format string\t%s", l.DateFormatString),
+			fmt.Sprintf("items (n)\t%d", len(l.Items))}
 	)
-	_, err = fmt.Fprintln(w, fmt.Sprintf(aLine, len(l.Amiibo)))
-	ok = (err == nil)
-	if !ok {
-		return err
-	}
-	_, err = fmt.Fprintln(w, fmt.Sprintf(iLine, len(l.Items)))
-	ok = (err == nil)
-	if !ok {
-		return err
-	}
-	err = w.Flush()
-	ok = (err == nil)
-	if !ok {
-		return err
-	}
-	return err
+	return table(w, x)
 }
 
 func unmarshalLineup(b *[]byte) (*lineup, error) {
