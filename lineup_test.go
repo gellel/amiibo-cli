@@ -12,4 +12,5 @@ func TestLineup(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	tableLineup(w, l)
+	tableLineupAmiibo(w, l.Amiibo[0])
 }
