@@ -17,6 +17,10 @@ type compatabilityAmiibo struct {
 	URL             string `json:"url"`
 }
 
+func marshalCompatabilityAmiibo(c *compatabilityAmiibo) (*[]byte, error) {
+	return marshal(c)
+}
+
 func tableCompatabilityAmiibo(w *tabwriter.Writer, c *compatabilityAmiibo) error {
 	var (
 		x = &[]string{
@@ -31,4 +35,18 @@ func tableCompatabilityAmiibo(w *tabwriter.Writer, c *compatabilityAmiibo) error
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
 	return printlnTable(w, x)
+}
+
+func unmarshalCompatabilityAmiibo(b *[]byte) (*compatabilityAmiibo, error) {
+	var (
+		c   compatabilityAmiibo
+		err error
+		ok  bool
+	)
+	err = unmarshal(b, &c)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &c, err
 }

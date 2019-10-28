@@ -16,6 +16,10 @@ type compatabilityGame struct {
 	URL             string `json:"url"`
 }
 
+func marshalCompatabilityGame(c *compatabilityGame) (*[]byte, error) {
+	return marshal(c)
+}
+
 func tableCompatabilityGame(w *tabwriter.Writer, c *compatabilityGame) error {
 	var (
 		x = &[]string{
@@ -28,4 +32,18 @@ func tableCompatabilityGame(w *tabwriter.Writer, c *compatabilityGame) error {
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
 	return printlnTable(w, x)
+}
+
+func unmarshalCompatabilityGame(b *[]byte) (*compatabilityGame, error) {
+	var (
+		c   compatabilityGame
+		err error
+		ok  bool
+	)
+	err = unmarshal(b, &c)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &c, err
 }

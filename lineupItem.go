@@ -11,3 +11,17 @@ type lineupItem struct {
 func marshalLineupItem(l *lineupItem) (*[]byte, error) {
 	return marshal(l)
 }
+
+func unmarshalLineupItem(b *[]byte) (*lineupItem, error) {
+	var (
+		err error
+		l   lineupItem
+		ok  bool
+	)
+	err = unmarshal(b, &l)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &l, err
+}

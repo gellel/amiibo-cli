@@ -27,6 +27,10 @@ type lineupAmiibo struct {
 	UPC                 string `json:"upc"`
 }
 
+func marshalLineupAmiibo(l *lineupAmiibo) (*[]byte, error) {
+	return marshal(l)
+}
+
 func tableLineupAmiibo(w *tabwriter.Writer, l *lineupAmiibo) error {
 	var (
 		x = &[]string{
@@ -51,4 +55,18 @@ func tableLineupAmiibo(w *tabwriter.Writer, l *lineupAmiibo) error {
 			fmt.Sprintf("upc\t%s", l.UPC)}
 	)
 	return printlnTable(w, x)
+}
+
+func unmarshalLineupAmiibo(b *[]byte) (*lineupAmiibo, error) {
+	var (
+		err error
+		l   lineupAmiibo
+		ok  bool
+	)
+	err = unmarshal(b, &l)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &l, err
 }

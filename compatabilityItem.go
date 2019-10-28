@@ -13,6 +13,10 @@ type compatabilityItem struct {
 	URL          string `json:"url"`
 }
 
+func marshalCompatabilityItem(c *compatabilityItem) (*[]byte, error) {
+	return marshal(c)
+}
+
 func tableCompatabilityItem(w *tabwriter.Writer, c *compatabilityItem) error {
 	var (
 		x = &[]string{
@@ -23,4 +27,18 @@ func tableCompatabilityItem(w *tabwriter.Writer, c *compatabilityItem) error {
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
 	return printlnTable(w, x)
+}
+
+func unmarshalCompatabilityItem(b *[]byte) (*compatabilityItem, error) {
+	var (
+		c   compatabilityItem
+		err error
+		ok  bool
+	)
+	err = unmarshal(b, &c)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &c, err
 }
