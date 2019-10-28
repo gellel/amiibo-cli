@@ -55,10 +55,10 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	if !ok {
 		return nil, fmt.Errorf("*c and *l do not share a common name")
 	}
-	ok = (c.Type == l.Type)
-	if !ok {
-		return nil, fmt.Errorf("*c and *l do not share a common type")
-	}
+	fmt.Println(stringifyMarshalCompatabilityAmiibo(c))
+	fmt.Println(stringifyMarshalLineupAmiibo(l))
+	fmt.Println("====")
+
 	a = &amiibo{
 		BoxArtURL:           l.BoxArtURL,
 		DetailsPath:         l.DetailsPath,

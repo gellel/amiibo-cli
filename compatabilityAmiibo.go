@@ -21,6 +21,10 @@ func marshalCompatabilityAmiibo(c *compatabilityAmiibo) (*[]byte, error) {
 	return marshal(c)
 }
 
+func stringifyMarshalCompatabilityAmiibo(c *compatabilityAmiibo) string {
+	return stringifyMarshal(c)
+}
+
 func tableCompatabilityAmiibo(w *tabwriter.Writer, c *compatabilityAmiibo) error {
 	var (
 		x = &[]string{

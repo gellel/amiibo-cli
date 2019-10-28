@@ -29,6 +29,21 @@ func marshal(v interface{}) (*[]byte, error) {
 	return &b, err
 }
 
+func stringifyMarshal(v interface{}) string {
+	var (
+		b   *[]byte
+		err error
+		s   string
+		ok  bool
+	)
+	b, err = marshal(v)
+	ok = (err == nil)
+	if !ok {
+		return s
+	}
+	return string(*b)
+}
+
 func unmarshal(b *[]byte, v interface{}) error {
 	var (
 		err error

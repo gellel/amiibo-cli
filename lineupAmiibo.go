@@ -31,6 +31,10 @@ func marshalLineupAmiibo(l *lineupAmiibo) (*[]byte, error) {
 	return marshal(l)
 }
 
+func stringifyMarshalLineupAmiibo(l *lineupAmiibo) string {
+	return stringifyMarshal(l)
+}
+
 func tableLineupAmiibo(w *tabwriter.Writer, l *lineupAmiibo) error {
 	var (
 		x = &[]string{

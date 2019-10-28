@@ -1,8 +1,8 @@
 package main
 
 type mixAmiibo struct {
-	Compatability *compatabilityAmiibo
-	Lineup        *lineupAmiibo
+	*compatabilityAmiibo
+	*lineupAmiibo
 }
 
 func newMixAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*mixAmiibo, error) {
