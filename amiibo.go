@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type amiibo struct {
 	BoxArtURL           string `json:"box_art_URL"`
 	DetailsPath         string `json:"details_path"`
@@ -27,8 +29,37 @@ type amiibo struct {
 	URL                 string `json:"URL"`
 }
 
-func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) *amiibo {
-	return &amiibo{
+func marshalAmiibo(a *amiibo) (*[]byte, error) {
+	return marshalB(a)
+}
+
+func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
+	var (
+		a   *amiibo
+		err error
+		ok  bool
+	)
+	ok = (c != nil)
+	if !ok {
+		return nil, fmt.Errorf("*c is nil")
+	}
+	ok = (l != nil)
+	if !ok {
+		return nil, fmt.Errorf("*l is nil")
+	}
+	ok = (c.URL == l.DetailsURL)
+	if !ok {
+		return nil, fmt.Errorf("*c and *l do not share a common URL")
+	}
+	ok = (c.Name == l.AmiiboName)
+	if !ok {
+		return nil, fmt.Errorf("*c and *l do not share a common name")
+	}
+	ok = (c.Type == l.Type)
+	if !ok {
+		return nil, fmt.Errorf("*c and *l do not share a common type")
+	}
+	a = &amiibo{
 		BoxArtURL:           l.BoxArtURL,
 		DetailsPath:         l.DetailsPath,
 		DetailsURL:          l.DetailsURL,
@@ -52,4 +83,19 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) *amiibo {
 		Type:                c.Type,
 		UPC:                 l.UPC,
 		URL:                 c.URL}
+	return a, err
+}
+
+func unmarshalAmiibo(b *[]byte) (*amiibo, error) {
+	var (
+		a   amiibo
+		err error
+		ok  bool
+	)
+	err = unmarshalB(b, &a)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &a, err
 }
