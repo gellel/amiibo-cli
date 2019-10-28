@@ -12,7 +12,7 @@ func newcompatabilityGameMap(c []*compatabilityGame) (*compatabilityGameMap, err
 	)
 	ok = (c != nil)
 	if !ok {
-		return nil, fmt.Errorf("*c is ni")
+		return nil, fmt.Errorf("*c is nil")
 	}
 	ok = (len(c) != 0)
 	if !ok {
