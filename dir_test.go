@@ -9,7 +9,7 @@ func TestW(t *testing.T) {
 		folder string = ".amiibo-cli-test"
 	)
 	var (
-		d, err = userHomeDir()
+		d, err = getHomeDir()
 	)
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -18,7 +18,7 @@ func TestW(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	err = makeFile(d, folder, "test", "txt", &[]byte{})
+	err = writeFile(d, folder, "test", "txt", &[]byte{})
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

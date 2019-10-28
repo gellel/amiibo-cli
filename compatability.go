@@ -53,7 +53,7 @@ func tableCompatability(w *tabwriter.Writer, c *compatability) error {
 			fmt.Sprintf("language\t%s", c.Language),
 			fmt.Sprintf("mode\t%s", c.Mode)}
 	)
-	return table(w, x)
+	return printlnTable(w, x)
 }
 
 func unmarshalCompatability(b *[]byte) (*compatability, error) {

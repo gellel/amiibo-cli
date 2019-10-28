@@ -68,7 +68,7 @@ var (
 )
 
 var (
-	errNoUserHomeDir = fmt.Errorf("cannot find home directory for user")
+	errNoHomeDir = fmt.Errorf("cannot find home directory for user")
 )
 
 var (

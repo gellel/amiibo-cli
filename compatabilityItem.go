@@ -22,5 +22,5 @@ func tableCompatabilityItem(w *tabwriter.Writer, c *compatabilityItem) error {
 			fmt.Sprintf("title\t%s", c.Title),
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
-	return table(w, x)
+	return printlnTable(w, x)
 }

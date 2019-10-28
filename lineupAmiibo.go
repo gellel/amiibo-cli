@@ -50,5 +50,5 @@ func tableLineupAmiibo(w *tabwriter.Writer, l *lineupAmiibo) error {
 			fmt.Sprintf("unix timestamp\t%d", l.UnixTimestamp),
 			fmt.Sprintf("upc\t%s", l.UPC)}
 	)
-	return table(w, x)
+	return printlnTable(w, x)
 }

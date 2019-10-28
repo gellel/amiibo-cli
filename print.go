@@ -5,7 +5,7 @@ import (
 	"text/tabwriter"
 )
 
-func table(w *tabwriter.Writer, rows *[]string) error {
+func printlnTable(w *tabwriter.Writer, rows *[]string) error {
 	var (
 		err error
 		ok  bool

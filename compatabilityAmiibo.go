@@ -30,5 +30,5 @@ func tableCompatabilityAmiibo(w *tabwriter.Writer, c *compatabilityAmiibo) error
 			fmt.Sprintf("type\t%s", c.Type),
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
-	return table(w, x)
+	return printlnTable(w, x)
 }

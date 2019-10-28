@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -63,6 +61,39 @@ func hasNotDir(path string) bool {
 	return os.IsNotExist(err)
 }
 
+func getCurrentDir() (string, error) {
+	var (
+		err error
+		ok  bool
+		s   string
+	)
+	s, err = os.Executable()
+	ok = (err == nil)
+	if !ok {
+		return s, err
+	}
+	s = filepath.Dir(s)
+	return s, err
+}
+
+func getHomeDir() (string, error) {
+	var (
+		err error
+		s   string
+		ok  bool
+	)
+	s, err = os.UserHomeDir()
+	ok = (err == nil)
+	if !ok {
+		return s, err
+	}
+	ok = hasDir(s)
+	if !ok {
+		return s, errNoHomeDir
+	}
+	return s, err
+}
+
 func isDir(path string) bool {
 	var (
 		err  error
@@ -97,18 +128,4 @@ func makeDir(path string, folder string) error {
 		return errNotDir
 	}
 	return err
-}
-
-func makeFile(path, folder, name, ext string, b *[]byte) error {
-	var (
-		err error
-		ok  bool
-		p   = filepath.Join(path, folder, fmt.Sprintf("%s.%s", name, ext))
-	)
-	err = makeDir(path, folder)
-	ok = (err == nil)
-	if !ok {
-		return err
-	}
-	return ioutil.WriteFile(p, *b, writeMode)
 }
