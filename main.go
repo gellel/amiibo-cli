@@ -1,8 +1,6 @@
 package main
 
 import (
-	"errors"
-	"fmt"
 	"os"
 	"text/tabwriter"
 )
@@ -49,26 +47,6 @@ const (
 
 const (
 	writeMode os.FileMode = 0777
-)
-
-var (
-	errBNil = errors.New("*[]byte is nil")
-)
-
-var (
-	errBEmpty = errors.New("*[]byte is empty")
-)
-
-var (
-	errNotDir = errors.New("p is not a directory")
-)
-
-var (
-	errNotPtr = errors.New("interface{} is not a uintptr")
-)
-
-var (
-	errNoHomeDir = fmt.Errorf("cannot find home directory for user")
 )
 
 var (

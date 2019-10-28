@@ -36,7 +36,7 @@ func fillLineup(c *lineup) *lineup {
 }
 
 func marshalLineup(l *lineup) (*[]byte, error) {
-	return marshalB(l)
+	return marshal(l)
 }
 
 func tableLineup(w *tabwriter.Writer, l *lineup) error {
@@ -56,7 +56,7 @@ func unmarshalLineup(b *[]byte) (*lineup, error) {
 		err error
 		ok  bool
 	)
-	err = unmarshalB(b, &c)
+	err = unmarshal(b, &c)
 	ok = (err == nil)
 	if !ok {
 		return nil, err

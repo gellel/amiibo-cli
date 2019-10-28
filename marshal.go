@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 )
 
-func marshalB(v interface{}) (*[]byte, error) {
+func marshal(v interface{}) (*[]byte, error) {
 	var (
 		b   []byte
 		err error
@@ -14,7 +15,7 @@ func marshalB(v interface{}) (*[]byte, error) {
 	)
 	ok = (k == reflect.Ptr)
 	if !ok {
-		return nil, errNotPtr
+		return nil, fmt.Errorf("v is not pointer")
 	}
 	b, err = json.Marshal(v)
 	ok = (err == nil)
@@ -23,23 +24,23 @@ func marshalB(v interface{}) (*[]byte, error) {
 	}
 	ok = (len(b) != 0)
 	if !ok {
-		return nil, errBEmpty
+		return nil, fmt.Errorf("*b is empty")
 	}
 	return &b, err
 }
 
-func unmarshalB(b *[]byte, v interface{}) error {
+func unmarshal(b *[]byte, v interface{}) error {
 	var (
 		err error
 		ok  bool
 	)
 	ok = (b != nil)
 	if !ok {
-		return errBNil
+		return fmt.Errorf("*b is nil")
 	}
 	ok = (len(*b) > 0)
 	if !ok {
-		return errBEmpty
+		return fmt.Errorf("*b is empty")
 	}
 	err = json.Unmarshal(*b, v)
 	ok = (err == nil)

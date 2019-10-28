@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -17,7 +18,7 @@ func delDir(path string, folder string) error {
 	}
 	ok = isDir(p)
 	if !ok {
-		return errNotDir
+		return fmt.Errorf("%s is not a dir", p)
 	}
 	err = os.Remove(p)
 	ok = (err == nil)
@@ -39,7 +40,7 @@ func delDirAll(path string, folder string) error {
 	}
 	ok = isDir(p)
 	if !ok {
-		return errNotDir
+		return fmt.Errorf("%s is not a dir", p)
 	}
 	err = os.RemoveAll(p)
 	ok = (err == nil)
@@ -89,7 +90,7 @@ func getHomeDir() (string, error) {
 	}
 	ok = hasDir(s)
 	if !ok {
-		return s, errNoHomeDir
+		return s, fmt.Errorf("cannot get home dir")
 	}
 	return s, err
 }
@@ -125,7 +126,7 @@ func makeDir(path string, folder string) error {
 	}
 	ok = isDir(p)
 	if !ok {
-		return errNotDir
+		return fmt.Errorf("%s is not a dir", p)
 	}
 	return err
 }

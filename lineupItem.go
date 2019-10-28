@@ -9,5 +9,5 @@ type lineupItem struct {
 }
 
 func marshalLineupItem(l *lineupItem) (*[]byte, error) {
-	return marshalB(l)
+	return marshal(l)
 }

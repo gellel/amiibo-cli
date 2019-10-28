@@ -30,7 +30,7 @@ type amiibo struct {
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
-	return marshalB(a)
+	return marshal(a)
 }
 
 func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
@@ -92,7 +92,7 @@ func unmarshalAmiibo(b *[]byte) (*amiibo, error) {
 		err error
 		ok  bool
 	)
-	err = unmarshalB(b, &a)
+	err = unmarshal(b, &a)
 	ok = (err == nil)
 	if !ok {
 		return nil, err

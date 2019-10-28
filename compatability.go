@@ -39,7 +39,7 @@ func fillCompatability(c *compatability) *compatability {
 }
 
 func marshalCompatability(c *compatability) (*[]byte, error) {
-	return marshalB(c)
+	return marshal(c)
 }
 
 func tableCompatability(w *tabwriter.Writer, c *compatability) error {
@@ -62,7 +62,7 @@ func unmarshalCompatability(b *[]byte) (*compatability, error) {
 		err error
 		ok  bool
 	)
-	err = unmarshalB(b, &c)
+	err = unmarshal(b, &c)
 	ok = (err == nil)
 	if !ok {
 		return nil, err

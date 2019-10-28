@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -34,11 +35,11 @@ func net(rawurl string) (*xhr, error) {
 	}
 	ok = (b != nil)
 	if !ok {
-		return x, errBNil
+		return x, fmt.Errorf("*b is nil")
 	}
 	ok = (len(*b) != 0)
 	if !ok {
-		return x, errBEmpty
+		return x, fmt.Errorf("*b is empty")
 	}
 	x.Body = b
 	return x, err
