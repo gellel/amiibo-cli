@@ -7,3 +7,7 @@ type lineupItem struct {
 	Title        string `json:"title"`
 	URL          string `json:"url"`
 }
+
+func marshalLineupItem(l *lineupItem) (*[]byte, error) {
+	return marshalB(l)
+}

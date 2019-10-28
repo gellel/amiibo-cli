@@ -99,3 +99,17 @@ func unmarshalAmiibo(b *[]byte) (*amiibo, error) {
 	}
 	return &a, err
 }
+
+func writeAmiibo(path, folder string, a *amiibo) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalAmiibo(a)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, a.Name, b)
+}
