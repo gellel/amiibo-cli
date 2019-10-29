@@ -2,35 +2,42 @@ package main
 
 import (
 	"fmt"
+	"html"
+	"strings"
 	"time"
+
+	"golang.org/x/text/currency"
+	"golang.org/x/text/language"
 )
 
 type amiibo struct {
-	BoxArtURL           *addr     `json:"box_art_url"`
-	DetailsPath         string    `json:"details_path"`
-	DetailsURL          *addr     `json:"details_url"`
-	FigureURL           *addr     `json:"figure_url"`
-	Franchise           string    `json:"franchise"`
-	GameCode            string    `json:"game_code"`
-	HexCode             string    `json:"hex_code"`
-	ID                  string    `json:"id"`
-	ImageURL            *addr     `json:"image_url"`
-	IsRelatedTo         string    `json:"is_related_to"`
-	IsReleased          string    `json:"is_released"`
-	Name                string    `json:"name"`
-	OverviewDescription string    `json:"overview_description"`
-	PageURL             *addr     `json:"page"`
-	PresentedBy         string    `json:"presented_by"`
-	Price               string    `json:"price"`
-	ReleaseDateMask     string    `json:"release_date_mask"`
-	Series              string    `json:"series"`
-	Slug                string    `json:"slug"`
-	TagID               string    `json:"tag_id"`
-	Timestamp           time.Time `json:"timestamp"`
-	Type                string    `json:"type"`
-	UnixTimestamp       int64     `json:"unix_timestamp"`
-	UPC                 string    `json:"upc"`
-	URL                 *addr     `json:"url"`
+	BoxArtURL           *addr        `json:"box_art_url"`
+	DetailsPath         string       `json:"details_path"`
+	DetailsURL          *addr        `json:"details_url"`
+	Currency            string       `json:"currency"`
+	FigureURL           *addr        `json:"figure_url"`
+	Franchise           string       `json:"franchise"`
+	GameCode            string       `json:"game_code"`
+	HexCode             string       `json:"hex_code"`
+	ID                  string       `json:"id"`
+	ImageURL            *addr        `json:"image_url"`
+	IsRelatedTo         string       `json:"is_related_to"`
+	IsReleased          string       `json:"is_released"`
+	Language            language.Tag `json:"language"`
+	Name                string       `json:"name"`
+	OverviewDescription string       `json:"overview_description"`
+	PageURL             *addr        `json:"page"`
+	PresentedBy         string       `json:"presented_by"`
+	Price               string       `json:"price"`
+	ReleaseDateMask     string       `json:"release_date_mask"`
+	Series              string       `json:"series"`
+	Slug                string       `json:"slug"`
+	TagID               string       `json:"tag_id"`
+	Timestamp           time.Time    `json:"timestamp"`
+	Type                string       `json:"type"`
+	UnixTimestamp       int64        `json:"unix_timestamp"`
+	UPC                 string       `json:"upc"`
+	URL                 *addr        `json:"url"`
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -44,10 +51,12 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	var (
 		a           *amiibo
 		boxAddr     *addr
+		currency    = currency.USD.String()
 		detailsAddr *addr
 		err         error
 		figureAddr  *addr
 		imageAddr   *addr
+		language    = language.AmericanEnglish
 		ok          bool
 		pageAddr    *addr
 		t           time.Time
@@ -84,7 +93,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	if !ok {
 		return nil, err
 	}
-	imageAddr, err = newAddr(fmt.Sprint(template, nintendoURL, c.Image))
+	imageAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, c.Image))
 	ok = (err == nil)
 	if !ok {
 		return nil, err
@@ -106,6 +115,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	}
 	a = &amiibo{
 		BoxArtURL:           boxAddr,
+		Currency:            currency,
 		DetailsPath:         l.DetailsPath,
 		DetailsURL:          detailsAddr,
 		FigureURL:           figureAddr,
@@ -116,8 +126,9 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		ImageURL:            imageAddr,
 		IsRelatedTo:         c.IsRelatedTo,
 		IsReleased:          c.IsReleased,
-		Name:                c.Name,
-		OverviewDescription: l.OverviewDescription,
+		Language:            language,
+		Name:                stripAmiiboName(c.Name),
+		OverviewDescription: stripAmiiboHTML(l.OverviewDescription),
 		PageURL:             pageAddr,
 		PresentedBy:         l.PresentedBy,
 		Price:               l.Price,
@@ -131,6 +142,20 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		UPC:                 l.UPC,
 		URL:                 uAddr}
 	return a, err
+}
+
+func stripAmiiboHTML(s string) string {
+	s = reStripSpaces.ReplaceAllString(reStripHTML.ReplaceAllString(s, " "), " ")
+	s = html.UnescapeString(strings.TrimSpace(s))
+	return s
+}
+
+func stripAmiiboName(s string) string {
+	return (reStripName.ReplaceAllString(s, ""))
+}
+
+func stringifyMarshalAmiibo(a *amiibo) string {
+	return stringifyMarshal(a)
 }
 
 func unmarshalAmiibo(b *[]byte) (*amiibo, error) {

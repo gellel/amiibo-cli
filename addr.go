@@ -1,6 +1,9 @@
 package main
 
-import "net/url"
+import (
+	"fmt"
+	"net/url"
+)
 
 type addr struct {
 	Fragment string `json:"fragment"`
@@ -25,6 +28,8 @@ func newAddr(rawurl string) (*addr, error) {
 	URL, err = url.Parse(rawurl)
 	ok = (err == nil)
 	if !ok {
+		fmt.Println(rawurl)
+
 		return nil, err
 	}
 	a = &addr{
