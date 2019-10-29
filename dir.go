@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
 )
 
@@ -82,15 +83,17 @@ func getHomeDir() (string, error) {
 		err error
 		s   string
 		ok  bool
+		u   *user.User
 	)
-	s, err = os.UserHomeDir()
+	u, err = user.Current()
 	ok = (err == nil)
 	if !ok {
 		return s, err
 	}
+	s = u.HomeDir
 	ok = hasDir(s)
 	if !ok {
-		return s, fmt.Errorf("cannot get home dir")
+		return s, fmt.Errorf("cannot get homedir")
 	}
 	return s, err
 }

@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-type addr struct {
+type address struct {
 	Fragment string `json:"fragment"`
 	Host     string `json:"host"`
 	Hostname string `json:"hostname"`
@@ -14,13 +14,13 @@ type addr struct {
 	URL      string `json:"url"`
 }
 
-func marshalAddr(a *addr) (*[]byte, error) {
+func marshalAddress(a *address) (*[]byte, error) {
 	return marshal(a)
 }
 
-func newAddr(rawurl string) (*addr, error) {
+func newAddress(rawurl string) (*address, error) {
 	var (
-		a   *addr
+		a   *address
 		err error
 		ok  bool
 		URL *url.URL
@@ -32,7 +32,7 @@ func newAddr(rawurl string) (*addr, error) {
 
 		return nil, err
 	}
-	a = &addr{
+	a = &address{
 		Fragment: URL.Fragment,
 		Host:     URL.Host,
 		Hostname: URL.Hostname(),
@@ -42,9 +42,9 @@ func newAddr(rawurl string) (*addr, error) {
 	return a, err
 }
 
-func unmarshalAddr(b *[]byte) (*addr, error) {
+func unmarshalAddress(b *[]byte) (*address, error) {
 	var (
-		a   addr
+		a   address
 		err error
 		ok  bool
 	)

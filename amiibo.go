@@ -11,22 +11,22 @@ import (
 )
 
 type amiibo struct {
-	BoxArtURL       *addr        `json:"box_art_url"`
+	BoxArtURL       *address     `json:"box_art_url"`
 	Currency        string       `json:"currency"`
 	Description     string       `json:"description"`
 	DetailsPath     string       `json:"details_path"`
-	DetailsURL      *addr        `json:"details_url"`
-	FigureURL       *addr        `json:"figure_url"`
+	DetailsURL      *address     `json:"details_url"`
+	FigureURL       *address     `json:"figure_url"`
 	Franchise       string       `json:"franchise"`
 	GameCode        string       `json:"game_code"`
 	HexCode         string       `json:"hex_code"`
 	ID              string       `json:"id"`
-	ImageURL        *addr        `json:"image_url"`
+	ImageURL        *address     `json:"image_url"`
 	IsRelatedTo     string       `json:"is_related_to"`
 	IsReleased      bool         `json:"is_released"`
 	Language        language.Tag `json:"language"`
 	Name            string       `json:"name"`
-	PageURL         *addr        `json:"page"`
+	PageURL         *address     `json:"page"`
 	PresentedBy     string       `json:"presented_by"`
 	Price           string       `json:"price"`
 	ReleaseDateMask string       `json:"release_date_mask"`
@@ -37,7 +37,7 @@ type amiibo struct {
 	Type            string       `json:"type"`
 	UnixTimestamp   int64        `json:"unix_timestamp"`
 	UPC             string       `json:"upc"`
-	URL             *addr        `json:"url"`
+	URL             *address     `json:"url"`
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -49,18 +49,18 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		template string = "%s%s"
 	)
 	var (
-		a           *amiibo
-		boxAddr     *addr
-		currency    = currency.USD.String()
-		detailsAddr *addr
-		err         error
-		figureAddr  *addr
-		imageAddr   *addr
-		language    = language.AmericanEnglish
-		ok          bool
-		pageAddr    *addr
-		t           time.Time
-		uAddr       *addr
+		a              *amiibo
+		boxAddress     *address
+		currency       = currency.USD.String()
+		detailsAddress *address
+		err            error
+		figureAddress  *address
+		imageAddress   *address
+		language       = language.AmericanEnglish
+		ok             bool
+		pageAddress    *address
+		t              time.Time
+		uAddress       *address
 	)
 	ok = (c != nil)
 	if !ok {
@@ -78,58 +78,54 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	if !ok {
 		return nil, fmt.Errorf("*c and *l do not share a common name")
 	}
-	boxAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.BoxArtURL))
+	boxAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.BoxArtURL))
 	ok = (err == nil)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse %s address: err %s", "box", err.Error())
 	}
-	detailsAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.DetailsURL))
+	detailsAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.DetailsURL))
 	ok = (err == nil)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse %s address: err %s", "details", err.Error())
 	}
-	figureAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.FigureURL))
+	figureAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.FigureURL))
 	ok = (err == nil)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse %s address: err %s", "figure", err.Error())
 	}
-	imageAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, c.Image))
+	imageAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, c.Image))
 	ok = (err == nil)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse %s address: err %s", "image", err.Error())
 	}
-	pageAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.AmiiboPage))
+	pageAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.AmiiboPage))
 	ok = (err == nil)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse %s address: err %s", "page", err.Error())
 	}
-	uAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, c.URL))
+	uAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, c.URL))
 	ok = (err == nil)
 	if !ok {
-		return nil, err
+		return nil, fmt.Errorf("cannot parse %s address: err %s", "url", err.Error())
 	}
 	t = time.Unix(0, l.UnixTimestamp)
-	ok = (err == nil)
-	if !ok {
-		return nil, err
-	}
 	a = &amiibo{
-		BoxArtURL:       boxAddr,
+		BoxArtURL:       boxAddress,
 		Currency:        currency,
 		Description:     stripAmiiboHTML(l.OverviewDescription),
 		DetailsPath:     l.DetailsPath,
-		DetailsURL:      detailsAddr,
-		FigureURL:       figureAddr,
+		DetailsURL:      detailsAddress,
+		FigureURL:       figureAddress,
 		Franchise:       l.Franchise,
 		GameCode:        l.GameCode,
 		HexCode:         l.HexCode,
 		ID:              c.ID,
-		ImageURL:        imageAddr,
+		ImageURL:        imageAddress,
 		IsRelatedTo:     c.IsRelatedTo,
 		IsReleased:      l.IsReleased,
 		Language:        language,
 		Name:            stripAmiiboName(c.Name),
-		PageURL:         pageAddr,
+		PageURL:         pageAddress,
 		PresentedBy:     l.PresentedBy,
 		Price:           l.Price,
 		ReleaseDateMask: c.ReleaseDateMask,
@@ -140,7 +136,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		Type:            c.Type,
 		UnixTimestamp:   l.UnixTimestamp,
 		UPC:             l.UPC,
-		URL:             uAddr}
+		URL:             uAddress}
 	return a, err
 }
 
