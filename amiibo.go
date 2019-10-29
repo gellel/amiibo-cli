@@ -11,33 +11,33 @@ import (
 )
 
 type amiibo struct {
-	BoxArtURL           *addr        `json:"box_art_url"`
-	DetailsPath         string       `json:"details_path"`
-	DetailsURL          *addr        `json:"details_url"`
-	Currency            string       `json:"currency"`
-	FigureURL           *addr        `json:"figure_url"`
-	Franchise           string       `json:"franchise"`
-	GameCode            string       `json:"game_code"`
-	HexCode             string       `json:"hex_code"`
-	ID                  string       `json:"id"`
-	ImageURL            *addr        `json:"image_url"`
-	IsRelatedTo         string       `json:"is_related_to"`
-	IsReleased          string       `json:"is_released"`
-	Language            language.Tag `json:"language"`
-	Name                string       `json:"name"`
-	OverviewDescription string       `json:"overview_description"`
-	PageURL             *addr        `json:"page"`
-	PresentedBy         string       `json:"presented_by"`
-	Price               string       `json:"price"`
-	ReleaseDateMask     string       `json:"release_date_mask"`
-	Series              string       `json:"series"`
-	Slug                string       `json:"slug"`
-	TagID               string       `json:"tag_id"`
-	Timestamp           time.Time    `json:"timestamp"`
-	Type                string       `json:"type"`
-	UnixTimestamp       int64        `json:"unix_timestamp"`
-	UPC                 string       `json:"upc"`
-	URL                 *addr        `json:"url"`
+	BoxArtURL       *addr        `json:"box_art_url"`
+	Currency        string       `json:"currency"`
+	Description     string       `json:"description"`
+	DetailsPath     string       `json:"details_path"`
+	DetailsURL      *addr        `json:"details_url"`
+	FigureURL       *addr        `json:"figure_url"`
+	Franchise       string       `json:"franchise"`
+	GameCode        string       `json:"game_code"`
+	HexCode         string       `json:"hex_code"`
+	ID              string       `json:"id"`
+	ImageURL        *addr        `json:"image_url"`
+	IsRelatedTo     string       `json:"is_related_to"`
+	IsReleased      bool         `json:"is_released"`
+	Language        language.Tag `json:"language"`
+	Name            string       `json:"name"`
+	PageURL         *addr        `json:"page"`
+	PresentedBy     string       `json:"presented_by"`
+	Price           string       `json:"price"`
+	ReleaseDateMask string       `json:"release_date_mask"`
+	Series          string       `json:"series"`
+	Slug            string       `json:"slug"`
+	TagID           string       `json:"tag_id"`
+	Timestamp       time.Time    `json:"timestamp"`
+	Type            string       `json:"type"`
+	UnixTimestamp   int64        `json:"unix_timestamp"`
+	UPC             string       `json:"upc"`
+	URL             *addr        `json:"url"`
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -114,33 +114,33 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		return nil, err
 	}
 	a = &amiibo{
-		BoxArtURL:           boxAddr,
-		Currency:            currency,
-		DetailsPath:         l.DetailsPath,
-		DetailsURL:          detailsAddr,
-		FigureURL:           figureAddr,
-		Franchise:           l.Franchise,
-		GameCode:            l.GameCode,
-		HexCode:             l.HexCode,
-		ID:                  c.ID,
-		ImageURL:            imageAddr,
-		IsRelatedTo:         c.IsRelatedTo,
-		IsReleased:          c.IsReleased,
-		Language:            language,
-		Name:                stripAmiiboName(c.Name),
-		OverviewDescription: stripAmiiboHTML(l.OverviewDescription),
-		PageURL:             pageAddr,
-		PresentedBy:         l.PresentedBy,
-		Price:               l.Price,
-		ReleaseDateMask:     c.ReleaseDateMask,
-		Series:              l.Series,
-		Slug:                l.Slug,
-		TagID:               c.TagID,
-		Timestamp:           t,
-		Type:                c.Type,
-		UnixTimestamp:       l.UnixTimestamp,
-		UPC:                 l.UPC,
-		URL:                 uAddr}
+		BoxArtURL:       boxAddr,
+		Currency:        currency,
+		Description:     stripAmiiboHTML(l.OverviewDescription),
+		DetailsPath:     l.DetailsPath,
+		DetailsURL:      detailsAddr,
+		FigureURL:       figureAddr,
+		Franchise:       l.Franchise,
+		GameCode:        l.GameCode,
+		HexCode:         l.HexCode,
+		ID:              c.ID,
+		ImageURL:        imageAddr,
+		IsRelatedTo:     c.IsRelatedTo,
+		IsReleased:      l.IsReleased,
+		Language:        language,
+		Name:            stripAmiiboName(c.Name),
+		PageURL:         pageAddr,
+		PresentedBy:     l.PresentedBy,
+		Price:           l.Price,
+		ReleaseDateMask: c.ReleaseDateMask,
+		Series:          l.Series,
+		Slug:            l.Slug,
+		TagID:           c.TagID,
+		Timestamp:       t,
+		Type:            c.Type,
+		UnixTimestamp:   l.UnixTimestamp,
+		UPC:             l.UPC,
+		URL:             uAddr}
 	return a, err
 }
 
