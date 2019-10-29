@@ -8,7 +8,11 @@ type addr struct {
 	Hostname string `json:"hostname"`
 	Path     string `json:"path"`
 	Scheme   string `json:"scheme"`
-	URL      string `json:"URL"`
+	URL      string `json:"url"`
+}
+
+func marshalAddr(a *addr) (*[]byte, error) {
+	return marshal(a)
 }
 
 func newAddr(rawurl string) (*addr, error) {
@@ -31,4 +35,18 @@ func newAddr(rawurl string) (*addr, error) {
 		Scheme:   URL.Scheme,
 		URL:      rawurl}
 	return a, err
+}
+
+func unmarshalAddr(b *[]byte) (*addr, error) {
+	var (
+		a   addr
+		err error
+		ok  bool
+	)
+	err = unmarshal(b, &a)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return &a, err
 }

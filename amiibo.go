@@ -6,15 +6,15 @@ import (
 )
 
 type amiibo struct {
-	BoxArtURL           *addr     `json:"box_art_URL"`
+	BoxArtURL           *addr     `json:"box_art_url"`
 	DetailsPath         string    `json:"details_path"`
-	DetailsURL          *addr     `json:"details_URL"`
-	FigureURL           *addr     `json:"figure_URL"`
+	DetailsURL          *addr     `json:"details_url"`
+	FigureURL           *addr     `json:"figure_url"`
 	Franchise           string    `json:"franchise"`
 	GameCode            string    `json:"game_code"`
 	HexCode             string    `json:"hex_code"`
 	ID                  string    `json:"id"`
-	Image               string    `json:"image"`
+	ImageURL            *addr     `json:"image_url"`
 	IsRelatedTo         string    `json:"is_related_to"`
 	IsReleased          string    `json:"is_released"`
 	Name                string    `json:"name"`
@@ -29,8 +29,8 @@ type amiibo struct {
 	Timestamp           time.Time `json:"timestamp"`
 	Type                string    `json:"type"`
 	UnixTimestamp       int64     `json:"unix_timestamp"`
-	UPC                 string    `json:"UPC"`
-	URL                 *addr     `json:"URL"`
+	UPC                 string    `json:"upc"`
+	URL                 *addr     `json:"url"`
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -38,12 +38,16 @@ func marshalAmiibo(a *amiibo) (*[]byte, error) {
 }
 
 func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
+	const (
+		template string = "%s%s"
+	)
 	var (
 		a           *amiibo
 		boxAddr     *addr
 		detailsAddr *addr
 		err         error
 		figureAddr  *addr
+		imageAddr   *addr
 		ok          bool
 		pageAddr    *addr
 		t           time.Time
@@ -59,33 +63,38 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	}
 	ok = (c.URL == l.DetailsURL)
 	if !ok {
-		return nil, fmt.Errorf("*c and *l do not share a common URL")
+		return nil, fmt.Errorf("*c and *l do not share a common url")
 	}
 	ok = (c.Name == l.AmiiboName)
 	if !ok {
 		return nil, fmt.Errorf("*c and *l do not share a common name")
 	}
-	boxAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.BoxArtURL))
+	boxAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.BoxArtURL))
 	ok = (err == nil)
 	if !ok {
 		return nil, err
 	}
-	detailsAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.DetailsURL))
+	detailsAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.DetailsURL))
 	ok = (err == nil)
 	if !ok {
 		return nil, err
 	}
-	figureAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.FigureURL))
+	figureAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.FigureURL))
 	ok = (err == nil)
 	if !ok {
 		return nil, err
 	}
-	pageAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.AmiiboPage))
+	imageAddr, err = newAddr(fmt.Sprint(template, nintendoURL, c.Image))
 	ok = (err == nil)
 	if !ok {
 		return nil, err
 	}
-	uAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, c.URL))
+	pageAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, l.AmiiboPage))
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	uAddr, err = newAddr(fmt.Sprintf(template, nintendoURL, c.URL))
 	ok = (err == nil)
 	if !ok {
 		return nil, err
@@ -104,7 +113,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		GameCode:            l.GameCode,
 		HexCode:             l.HexCode,
 		ID:                  c.ID,
-		Image:               c.Image,
+		ImageURL:            imageAddr,
 		IsRelatedTo:         c.IsRelatedTo,
 		IsReleased:          c.IsReleased,
 		Name:                c.Name,
