@@ -24,10 +24,11 @@ func TestMix(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	for _, v := range *x {
-		_, err := newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo)
+		a, err := newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo)
 		if err != nil {
 			fmt.Println(err, v)
 			break
 		}
+		fmt.Println(stringifyMarshal(a))
 	}
 }

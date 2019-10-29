@@ -1,32 +1,36 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type amiibo struct {
-	BoxArtURL           string `json:"box_art_URL"`
-	DetailsPath         string `json:"details_path"`
-	DetailsURL          string `json:"details_URL"`
-	FigureURL           string `json:"figure_URL"`
-	Franchise           string `json:"franchise"`
-	GameCode            string `json:"game_code"`
-	HexCode             string `json:"hex_code"`
-	ID                  string `json:"id"`
-	Image               string `json:"image"`
-	IsRelatedTo         string `json:"is_related_to"`
-	IsReleased          string `json:"is_released"`
-	Name                string `json:"name"`
-	OverviewDescription string `json:"overview_description"`
-	PageURL             string `json:"page"`
-	PresentedBy         string `json:"presented_by"`
-	Price               string `json:"price"`
-	ReleaseDateMask     string `json:"release_date_mask"`
-	Series              string `json:"series"`
-	Slug                string `json:"slug"`
-	TagID               string `json:"tagid"`
-	Type                string `json:"type"`
-	UnixTimestamp       int64  `json:"unix_timestamp"`
-	UPC                 string `json:"UPC"`
-	URL                 string `json:"URL"`
+	BoxArtURL           *addr     `json:"box_art_URL"`
+	DetailsPath         string    `json:"details_path"`
+	DetailsURL          *addr     `json:"details_URL"`
+	FigureURL           *addr     `json:"figure_URL"`
+	Franchise           string    `json:"franchise"`
+	GameCode            string    `json:"game_code"`
+	HexCode             string    `json:"hex_code"`
+	ID                  string    `json:"id"`
+	Image               string    `json:"image"`
+	IsRelatedTo         string    `json:"is_related_to"`
+	IsReleased          string    `json:"is_released"`
+	Name                string    `json:"name"`
+	OverviewDescription string    `json:"overview_description"`
+	PageURL             *addr     `json:"page"`
+	PresentedBy         string    `json:"presented_by"`
+	Price               string    `json:"price"`
+	ReleaseDateMask     string    `json:"release_date_mask"`
+	Series              string    `json:"series"`
+	Slug                string    `json:"slug"`
+	TagID               string    `json:"tag_id"`
+	Timestamp           time.Time `json:"timestamp"`
+	Type                string    `json:"type"`
+	UnixTimestamp       int64     `json:"unix_timestamp"`
+	UPC                 string    `json:"UPC"`
+	URL                 *addr     `json:"URL"`
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -35,9 +39,15 @@ func marshalAmiibo(a *amiibo) (*[]byte, error) {
 
 func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	var (
-		a   *amiibo
-		err error
-		ok  bool
+		a           *amiibo
+		boxAddr     *addr
+		detailsAddr *addr
+		err         error
+		figureAddr  *addr
+		ok          bool
+		pageAddr    *addr
+		t           time.Time
+		uAddr       *addr
 	)
 	ok = (c != nil)
 	if !ok {
@@ -55,15 +65,41 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	if !ok {
 		return nil, fmt.Errorf("*c and *l do not share a common name")
 	}
-	fmt.Println(stringifyMarshalCompatabilityAmiibo(c))
-	fmt.Println(stringifyMarshalLineupAmiibo(l))
-	fmt.Println("====")
-
+	boxAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.BoxArtURL))
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	detailsAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.DetailsURL))
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	figureAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.FigureURL))
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	pageAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, l.AmiiboPage))
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	uAddr, err = newAddr(fmt.Sprintf("%s%s", nintendoURL, c.URL))
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	t = time.Unix(0, l.UnixTimestamp)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
 	a = &amiibo{
-		BoxArtURL:           l.BoxArtURL,
+		BoxArtURL:           boxAddr,
 		DetailsPath:         l.DetailsPath,
-		DetailsURL:          l.DetailsURL,
-		FigureURL:           l.FigureURL,
+		DetailsURL:          detailsAddr,
+		FigureURL:           figureAddr,
 		Franchise:           l.Franchise,
 		GameCode:            l.GameCode,
 		HexCode:             l.HexCode,
@@ -73,16 +109,18 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 		IsReleased:          c.IsReleased,
 		Name:                c.Name,
 		OverviewDescription: l.OverviewDescription,
-		PageURL:             l.AmiiboPage,
+		PageURL:             pageAddr,
 		PresentedBy:         l.PresentedBy,
 		Price:               l.Price,
 		ReleaseDateMask:     c.ReleaseDateMask,
 		Series:              l.Series,
 		Slug:                l.Slug,
 		TagID:               c.TagID,
+		Timestamp:           t,
 		Type:                c.Type,
+		UnixTimestamp:       l.UnixTimestamp,
 		UPC:                 l.UPC,
-		URL:                 c.URL}
+		URL:                 uAddr}
 	return a, err
 }
 
