@@ -20,7 +20,6 @@ func newMixAmiiboMap(c *compatabilityAmiiboMap, l *lineupAmiiboMap) (*mixAmiiboM
 	if !ok {
 		return nil, fmt.Errorf("*l is nil")
 	}
-	fmt.Println(len(*c), len(*l))
 	for k, v := range *c {
 		m[k] = &mixAmiibo{compatabilityAmiibo: v}
 	}

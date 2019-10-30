@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type mixAmiibo struct {
 	*compatabilityAmiibo
 	*lineupAmiibo
@@ -8,8 +10,20 @@ type mixAmiibo struct {
 func newMixAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*mixAmiibo, error) {
 	var (
 		err error
-
-		m = &mixAmiibo{c, l}
+		m   mixAmiibo
+		ok  bool
 	)
-	return m, err
+	if !ok {
+		return nil, fmt.Errorf("*c is nil")
+	}
+	ok = (l != nil)
+	if !ok {
+		return nil, fmt.Errorf("*l is nil")
+	}
+	ok = (c.URL == l.DetailsURL)
+	if !ok {
+		return nil, fmt.Errorf("*c does not relate to *l")
+	}
+	m = mixAmiibo{c, l}
+	return &m, err
 }
