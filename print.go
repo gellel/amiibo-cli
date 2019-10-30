@@ -2,20 +2,22 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"text/tabwriter"
 )
 
-func printlnTable(w *tabwriter.Writer, rows *[]string) error {
+func printlnTable(w *tabwriter.Writer, x interface{}) error {
 	var (
-		err error
-		ok  bool
+		i int
+		n int
+		v reflect.Value
+		t reflect.Type
 	)
-	for i, s := range *rows {
-		_, err = fmt.Fprintln(w, fmt.Sprintf("%d\t%s", i, s))
-		ok = (err == nil)
-		if !ok {
-			return err
-		}
+	v = reflect.ValueOf(x)
+	t = v.Type()
+	n = v.NumField()
+	for i = 0; i < n; i++ {
+		fmt.Fprintln(w, fmt.Sprintf("%d\t%s\t%v", i, t.Field(i).Name, v.Field(i).Interface()))
 	}
 	return w.Flush()
 }

@@ -43,17 +43,7 @@ func marshalCompatability(c *compatability) (*[]byte, error) {
 }
 
 func tableCompatability(w *tabwriter.Writer, c *compatability) error {
-	var (
-		x = &[]string{
-			fmt.Sprintf("amiibo (n)\t%d", len(c.Amiibo)),
-			fmt.Sprintf("component path\t%s", c.ComponentPath),
-			fmt.Sprintf("date format string\t%s", c.DateFormatString),
-			fmt.Sprintf("games (n)\t%d", len(c.Games)),
-			fmt.Sprintf("items (n)\t%d", len(c.Items)),
-			fmt.Sprintf("language\t%s", c.Language),
-			fmt.Sprintf("mode\t%s", c.Mode)}
-	)
-	return printlnTable(w, x)
+	return printlnTable(w, *c)
 }
 
 func unmarshalCompatability(b *[]byte) (*compatability, error) {

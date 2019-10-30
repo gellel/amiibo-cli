@@ -26,7 +26,7 @@ func tableCompatabilityItem(w *tabwriter.Writer, c *compatabilityItem) error {
 			fmt.Sprintf("title\t%s", c.Title),
 			fmt.Sprintf("url\t%s", c.URL)}
 	)
-	return printlnTable(w, x)
+	return printlnTable(w, *x)
 }
 
 func unmarshalCompatabilityItem(b *[]byte) (*compatabilityItem, error) {

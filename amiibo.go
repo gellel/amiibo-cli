@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"strings"
+	"text/tabwriter"
 	"time"
 
 	"golang.org/x/text/currency"
@@ -152,6 +153,10 @@ func stripAmiiboName(s string) string {
 
 func stringifyMarshalAmiibo(a *amiibo) string {
 	return stringifyMarshal(a)
+}
+
+func tableAmiibo(w *tabwriter.Writer, a *amiibo) error {
+	return printlnTable(w, *a)
 }
 
 func unmarshalAmiibo(b *[]byte) (*amiibo, error) {

@@ -47,7 +47,7 @@ func tableLineup(w *tabwriter.Writer, l *lineup) error {
 			fmt.Sprintf("date format string\t%s", l.DateFormatString),
 			fmt.Sprintf("items (n)\t%d", len(l.Items))}
 	)
-	return printlnTable(w, x)
+	return printlnTable(w, *x)
 }
 
 func unmarshalLineup(b *[]byte) (*lineup, error) {

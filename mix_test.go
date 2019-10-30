@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -26,9 +25,8 @@ func TestMix(t *testing.T) {
 	for _, v := range *x {
 		a, err := newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo)
 		if err != nil {
-			fmt.Println(err, v)
 			break
 		}
-		fmt.Println(stringifyMarshal(a))
+		tableAmiibo(w, a)
 	}
 }
