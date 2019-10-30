@@ -1,5 +1,7 @@
 package main
 
+import "text/tabwriter"
+
 type lineupItem struct {
 	Description  string `json:"description"`
 	LastModified int64  `json:"lastModified"`
@@ -10,6 +12,10 @@ type lineupItem struct {
 
 func marshalLineupItem(l *lineupItem) (*[]byte, error) {
 	return marshal(l)
+}
+
+func tableLineupItem(w *tabwriter.Writer, l *lineupItem) error {
+	return printlnTable(w, *l)
 }
 
 func unmarshalLineupItem(b *[]byte) (*lineupItem, error) {

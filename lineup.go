@@ -40,14 +40,7 @@ func marshalLineup(l *lineup) (*[]byte, error) {
 }
 
 func tableLineup(w *tabwriter.Writer, l *lineup) error {
-	var (
-		x = &[]string{
-			fmt.Sprintf("amiibo (n)\t%d", len(l.Amiibo)),
-			fmt.Sprintf("component path\t%s", l.ComponentPath),
-			fmt.Sprintf("date format string\t%s", l.DateFormatString),
-			fmt.Sprintf("items (n)\t%d", len(l.Items))}
-	)
-	return printlnTable(w, *x)
+	return printlnTable(w, *l)
 }
 
 func unmarshalLineup(b *[]byte) (*lineup, error) {
