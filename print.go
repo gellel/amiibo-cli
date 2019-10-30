@@ -7,6 +7,9 @@ import (
 )
 
 func printlnTable(w *tabwriter.Writer, x interface{}) error {
+	const (
+		s string = "%d\t%s\t%v"
+	)
 	var (
 		i int
 		n int
@@ -17,7 +20,11 @@ func printlnTable(w *tabwriter.Writer, x interface{}) error {
 	t = v.Type()
 	n = v.NumField()
 	for i = 0; i < n; i++ {
-		fmt.Fprintln(w, fmt.Sprintf("%d\t%s\t%v", i, t.Field(i).Name, v.Field(i).Interface()))
+		var (
+			key   = t.Field(i).Name
+			value = v.Field(i).Interface()
+		)
+		fmt.Fprintln(w, fmt.Sprintf(s, i, key, value))
 	}
 	return w.Flush()
 }
