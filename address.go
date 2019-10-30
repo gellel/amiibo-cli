@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"net/url"
+	"text/tabwriter"
 )
 
 type address struct {
@@ -28,8 +28,6 @@ func newAddress(rawurl string) (*address, error) {
 	URL, err = url.Parse(rawurl)
 	ok = (err == nil)
 	if !ok {
-		fmt.Println(rawurl)
-
 		return nil, err
 	}
 	a = &address{
@@ -40,6 +38,10 @@ func newAddress(rawurl string) (*address, error) {
 		Scheme:   URL.Scheme,
 		URL:      rawurl}
 	return a, err
+}
+
+func tableAddress(w *tabwriter.Writer, a *address) error {
+	return printlnTable(w, *a)
 }
 
 func unmarshalAddress(b *[]byte) (*address, error) {
