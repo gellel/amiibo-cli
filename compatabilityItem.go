@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"text/tabwriter"
 )
 
@@ -18,15 +17,7 @@ func marshalCompatabilityItem(c *compatabilityItem) (*[]byte, error) {
 }
 
 func tableCompatabilityItem(w *tabwriter.Writer, c *compatabilityItem) error {
-	var (
-		x = &[]string{
-			fmt.Sprintf("description\t%s", c.Description),
-			fmt.Sprintf("last modified\t%d", c.LastModified),
-			fmt.Sprintf("path\t%s", c.Path),
-			fmt.Sprintf("title\t%s", c.Title),
-			fmt.Sprintf("url\t%s", c.URL)}
-	)
-	return printlnTable(w, *x)
+	return printlnTable(w, *c)
 }
 
 func unmarshalCompatabilityItem(b *[]byte) (*compatabilityItem, error) {
