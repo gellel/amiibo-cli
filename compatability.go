@@ -59,3 +59,20 @@ func unmarshalCompatability(b *[]byte) (*compatability, error) {
 	}
 	return &c, err
 }
+
+func writeCompatability(path, folder string, c *compatability) error {
+	const (
+		name string = "compatability"
+	)
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalCompatability(c)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, name, b)
+}

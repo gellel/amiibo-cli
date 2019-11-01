@@ -24,7 +24,25 @@ func printlnTable(w *tabwriter.Writer, x interface{}) error {
 			key   = t.Field(i).Name
 			value = v.Field(i).Interface()
 		)
-		fmt.Fprintln(w, fmt.Sprintf(s, i, key, value))
+		switch reflect.ValueOf(value).Kind() == reflect.Ptr {
+		case true:
+			printlnTable(w, value.(valuer).Value())
+		default:
+			fmt.Fprintln(w, fmt.Sprintf(s, i, key, value))
+		}
 	}
 	return w.Flush()
+}
+
+func fprintlnTable(w *tabwriter.Writer, v valuer) error {
+	var (
+		err error
+	)
+	for key, value := range mapMarshal(v) {
+		_, err = fmt.Fprintln(w, fmt.Sprintf("t%s\t%v", key, value))
+		if err != nil {
+			break
+		}
+	}
+	return err
 }

@@ -117,7 +117,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 	if !ok {
 		return nil, fmt.Errorf("cannot parse %s address: err %s", "url", err.Error())
 	}
-	t = time.Unix(l.UnixTimestamp, 0).UTC()
+	t = (time.Unix(l.UnixTimestamp, 0).UTC())
 	a = &amiibo{
 		BoxArtURL:       boxAddress,
 		Currency:        currency,

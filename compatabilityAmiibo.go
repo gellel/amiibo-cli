@@ -49,3 +49,17 @@ func unmarshalCompatabilityAmiibo(b *[]byte) (*compatabilityAmiibo, error) {
 	}
 	return &c, err
 }
+
+func writeCompatabilityAmiibo(path, folder string, c *compatabilityAmiibo) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalCompatabilityAmiibo(c)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, c.Name, b)
+}

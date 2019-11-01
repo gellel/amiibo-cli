@@ -6,6 +6,27 @@ import (
 	"reflect"
 )
 
+func mapMarshal(x interface{}) map[string]interface{} {
+	var (
+		i int
+		m map[string]interface{}
+		n int
+		v reflect.Value
+		t reflect.Type
+	)
+	v = reflect.ValueOf(x)
+	t = v.Type()
+	n = v.NumField()
+	for i = 0; i < n; i++ {
+		var (
+			key   = t.Field(i).Name
+			value = v.Field(i).Interface()
+		)
+		m[key] = value
+	}
+	return m
+}
+
 func marshal(v interface{}) (*[]byte, error) {
 	var (
 		b   []byte
