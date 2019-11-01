@@ -15,7 +15,7 @@ func marshal(v interface{}) (*[]byte, error) {
 	)
 	ok = (k == reflect.Ptr)
 	if !ok {
-		return nil, fmt.Errorf("v is not pointer")
+		return nil, fmt.Errorf("v is not a pointer")
 	}
 	b, err = json.Marshal(v)
 	ok = (err == nil)
