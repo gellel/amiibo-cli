@@ -4,12 +4,20 @@ import (
 	"text/tabwriter"
 )
 
+var (
+	_ valuer = (&compatabilityItem{})
+)
+
 type compatabilityItem struct {
 	Description  string `json:"description"`
 	LastModified int64  `json:"lastModified"`
 	Path         string `json:"path"`
 	Title        string `json:"title"`
 	URL          string `json:"url"`
+}
+
+func (c *compatabilityItem) Value() interface{} {
+	return *c
 }
 
 func marshalCompatabilityItem(c *compatabilityItem) (*[]byte, error) {
