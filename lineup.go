@@ -6,11 +6,19 @@ import (
 	"text/tabwriter"
 )
 
+var (
+	_ valuer = (&lineup{})
+)
+
 type lineup struct {
 	Amiibo           []*lineupAmiibo `json:"amiiboList"`
 	ComponentPath    string          `json:"componentPath"`
 	DateFormatString string          `json:"dataFormatString"`
 	Items            []*lineupItem   `json:"items"`
+}
+
+func (l *lineup) Value() interface{} {
+	return *l
 }
 
 func getLineup() (*lineup, error) {

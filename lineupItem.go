@@ -2,12 +2,20 @@ package main
 
 import "text/tabwriter"
 
+var (
+	_ valuer = (&lineupItem{})
+)
+
 type lineupItem struct {
 	Description  string `json:"description"`
 	LastModified int64  `json:"lastModified"`
 	Path         string `json:"path"`
 	Title        string `json:"title"`
 	URL          string `json:"url"`
+}
+
+func (l *lineupItem) Value() interface{} {
+	return *l
 }
 
 func marshalLineupItem(l *lineupItem) (*[]byte, error) {

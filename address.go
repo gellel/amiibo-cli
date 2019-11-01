@@ -5,6 +5,10 @@ import (
 	"text/tabwriter"
 )
 
+var (
+	_ valuer = (&address{})
+)
+
 type address struct {
 	Fragment string `json:"fragment"`
 	Host     string `json:"host"`
@@ -12,6 +16,10 @@ type address struct {
 	Path     string `json:"path"`
 	Scheme   string `json:"scheme"`
 	URL      string `json:"url"`
+}
+
+func (a *address) Value() interface{} {
+	return *a
 }
 
 func marshalAddress(a *address) (*[]byte, error) {

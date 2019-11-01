@@ -11,6 +11,10 @@ import (
 	"golang.org/x/text/language"
 )
 
+var (
+	_ valuer = (&amiibo{})
+)
+
 type amiibo struct {
 	BoxArtURL       *address     `json:"box_art_url"`
 	Currency        string       `json:"currency"`
@@ -39,6 +43,10 @@ type amiibo struct {
 	UnixTimestamp   int64        `json:"unix_timestamp"`
 	UPC             string       `json:"upc"`
 	URL             *address     `json:"url"`
+}
+
+func (a *amiibo) Value() interface{} {
+	return *a
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
