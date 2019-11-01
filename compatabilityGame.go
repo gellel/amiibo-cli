@@ -4,6 +4,10 @@ import (
 	"text/tabwriter"
 )
 
+var (
+	_ valuer = (&compatabilityGame{})
+)
+
 type compatabilityGame struct {
 	Image           string `json:"image"`
 	ID              string `json:"id"`
@@ -13,6 +17,10 @@ type compatabilityGame struct {
 	ReleaseDateMask string `json:"releaseDateMask"`
 	Type            string `json:"type"`
 	URL             string `json:"url"`
+}
+
+func (c *compatabilityGame) Value() interface{} {
+	return *c
 }
 
 func marshalCompatabilityGame(c *compatabilityGame) (*[]byte, error) {
