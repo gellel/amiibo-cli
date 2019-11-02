@@ -65,3 +65,17 @@ func unmarshalAddress(b *[]byte) (*address, error) {
 	}
 	return &a, err
 }
+
+func writeAddress(path, folder string, a *address) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalAddress(a)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, a.Path, b)
+}
