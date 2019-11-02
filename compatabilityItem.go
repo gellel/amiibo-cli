@@ -41,3 +41,17 @@ func unmarshalCompatabilityItem(b *[]byte) (*compatabilityItem, error) {
 	}
 	return &c, err
 }
+
+func writeCompatabilityItem(path, folder string, c *compatabilityItem) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalCompatabilityItem(c)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, c.Title, b)
+}
