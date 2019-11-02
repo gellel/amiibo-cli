@@ -150,13 +150,13 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
 }
 
 func stripAmiiboHTML(s string) string {
-	s = reStripSpaces.ReplaceAllString(reStripHTML.ReplaceAllString(s, " "), " ")
+	s = regexpSpaces.ReplaceAllString(regexpHTML.ReplaceAllString(s, " "), " ")
 	s = html.UnescapeString(strings.TrimSpace(s))
 	return s
 }
 
 func stripAmiiboName(s string) string {
-	return (reStripName.ReplaceAllString(s, ""))
+	return (regexpName.ReplaceAllString(s, ""))
 }
 
 func stringifyMarshalAmiibo(a *amiibo) string {
