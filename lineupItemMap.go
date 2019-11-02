@@ -4,7 +4,7 @@ import "fmt"
 
 type lineupItemMap map[string]*lineupItem
 
-func newLineupItem(l []*lineupItem) (*lineupItemMap, error) {
+func newLineupItemMap(l []*lineupItem) (*lineupItemMap, error) {
 	var (
 		err error
 		m   = lineupItemMap{}
