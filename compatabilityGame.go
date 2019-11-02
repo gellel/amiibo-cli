@@ -44,3 +44,17 @@ func unmarshalCompatabilityGame(b *[]byte) (*compatabilityGame, error) {
 	}
 	return &c, err
 }
+
+func writeCompatabilityGame(path, folder string, c *compatabilityGame) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalCompatabilityGame(c)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, c.Name, b)
+}
