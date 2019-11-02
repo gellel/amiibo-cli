@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type mixItemMap map[string]*mixItem
 
@@ -30,4 +33,24 @@ func newMixItemMap(c *compatabilityItemMap, l *lineupItemMap) (*mixItemMap, erro
 		}
 	}
 	return &m, err
+}
+
+func newMixItemMapFromMix(m *mix) (*mixItemMap, error) {
+	var (
+		c  *compatabilityItemMap
+		l  *lineupItemMap
+		wg sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		c, _ = newCompatabilityItemMap(m.CompatabilityItem)
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		l, _ = newLineupItemMap(m.LineupItem)
+	}()
+	wg.Wait()
+	return newMixItemMap(c, l)
 }
