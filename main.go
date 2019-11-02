@@ -55,13 +55,13 @@ var (
 )
 
 var (
-	reStripHTML = regexp.MustCompile(`(<[^>]*>|\n(\s{1,})?)`)
+	regexpHTML = regexp.MustCompile(`(<[^>]*>|\n(\s{1,})?)`)
 )
 var (
-	reStripName = regexp.MustCompile(`(\&\#[0-9]+\;|™)`)
+	regexpName = regexp.MustCompile(`(\&\#[0-9]+\;|™)`)
 )
 var (
-	reStripSpaces = regexp.MustCompile(`\s{2,}`)
+	regexpSpaces = regexp.MustCompile(`\s{2,}`)
 )
 
 func main() {}
