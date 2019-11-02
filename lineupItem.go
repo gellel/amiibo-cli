@@ -39,3 +39,17 @@ func unmarshalLineupItem(b *[]byte) (*lineupItem, error) {
 	}
 	return &l, err
 }
+
+func writeLineupItem(path, folder string, l *lineupItem) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalLineupItem(l)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, l.Title, b)
+}

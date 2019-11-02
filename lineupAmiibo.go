@@ -59,3 +59,17 @@ func unmarshalLineupAmiibo(b *[]byte) (*lineupAmiibo, error) {
 	}
 	return &l, err
 }
+
+func writeLineupAmiibo(path, folder string, l *lineupAmiibo) error {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalLineupAmiibo(l)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, l.AmiiboName, b)
+}

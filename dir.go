@@ -93,7 +93,7 @@ func getHomeDir() (string, error) {
 	s = u.HomeDir
 	ok = hasDir(s)
 	if !ok {
-		return s, fmt.Errorf("cannot get homedir")
+		return s, fmt.Errorf("cannot get home dir")
 	}
 	return s, err
 }
