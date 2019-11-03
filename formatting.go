@@ -3,8 +3,21 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"text/tabwriter"
 )
+
+func  normalizeAmiiboMapKey(s string) string {
+	const (
+		p1 string = "/content/noa/en_US"
+		p2 string = "/amiibo/detail/"
+		s1 string = ".html"
+	)
+	s = strings.TrimPrefix(s, p1)
+	s = strings.TrimPrefix(s, p2)
+	s = strings.TrimSuffix(s, s1)
+	return s
+}
 
 func printlnTable(w *tabwriter.Writer, x interface{}) error {
 	const (

@@ -19,7 +19,10 @@ func newLineupAmiiboMap(l []*lineupAmiibo) (*lineupAmiiboMap, error) {
 		return nil, fmt.Errorf("*l is empty")
 	}
 	for _, v := range l {
-		m[v.DetailsURL] = v
+		var (
+			s =  normalizeAmiiboMapKey(v.DetailsURL)
+		)
+		m[s] = v
 	}
 	return &m, err
 }
