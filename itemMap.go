@@ -2,15 +2,15 @@ package main
 
 import "fmt"
 
-type amiiboMap map[string]*amiibo
+type itemMap map[string]*item
 
-func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
+func newItemMap(m *mixItemMap) (*itemMap, error) {
 	var (
-		a   *amiibo
 		err error
+		i   *item
 		ok  bool
 
-		x = amiiboMap{}
+		x = itemMap{}
 	)
 	ok = (m != nil)
 	if !ok {
@@ -21,11 +21,11 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 		return nil, fmt.Errorf("*m is empty")
 	}
 	for _, v := range *m {
-		a, err = newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo)
+		i, err = newItem(v.compatabilityItem, v.lineupItem)
 		if err != nil {
 			continue
 		}
-		x[a.ID] = a
+		fmt.Println(i)
 	}
 	return &x, err
 }

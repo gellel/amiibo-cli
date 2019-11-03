@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type lineupItemMap map[string]*lineupItem
 
@@ -19,7 +22,9 @@ func newLineupItemMap(l []*lineupItem) (*lineupItemMap, error) {
 		return nil, fmt.Errorf("*l is empty")
 	}
 	for _, v := range l {
-		m[v.URL] = v
+		s := strings.TrimPrefix(v.URL, "/content/noa/en_US")
+		s = strings.TrimSuffix(s, ".html")
+		m[s] = v
 	}
 	return &m, err
 }

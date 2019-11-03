@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"regexp"
 	"text/tabwriter"
@@ -31,7 +32,7 @@ const (
 )
 
 const (
-	lineupURI string = contentURI + "/" + "/line-up/jcr:content/root/responsivegrid/lineup.model.json"
+	lineupURI string = contentURI + "/" + "line-up/jcr:content/root/responsivegrid/lineup.model.json"
 )
 
 const (
@@ -64,4 +65,8 @@ var (
 	regexpSpaces = regexp.MustCompile(`\s{2,}`)
 )
 
-func main() {}
+func main() {
+	fmt.Println(compatabilityURI)
+	fmt.Println("-")
+	fmt.Println(lineupURI)
+}
