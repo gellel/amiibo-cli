@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	_ valuer = (&compatabilityAmiibo{})
+	_ keyspace = (&compatabilityAmiibo{})
+	_ valuer   = (&compatabilityAmiibo{})
 )
 
 type compatabilityAmiibo struct {
@@ -18,6 +19,10 @@ type compatabilityAmiibo struct {
 	TagID           string `json:"tagid"`
 	Type            string `json:"type"`
 	URL             string `json:"url"`
+}
+
+func (c *compatabilityAmiibo) Key() string {
+	return normalizeAmiiboMapKey(c.URL)
 }
 
 func (c *compatabilityAmiibo) Value() interface{} {

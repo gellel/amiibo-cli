@@ -5,6 +5,7 @@ import "fmt"
 type mixAmiibo struct {
 	*compatabilityAmiibo
 	*lineupAmiibo
+	*lineupItem
 }
 
 func newMixAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*mixAmiibo, error) {
@@ -24,6 +25,6 @@ func newMixAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*mixAmiibo, error) {
 	if !ok {
 		return nil, fmt.Errorf("*c does not relate to *l")
 	}
-	m = mixAmiibo{c, l}
+	m = mixAmiibo{compatabilityAmiibo: c, lineupAmiibo: l}
 	return &m, err
 }
