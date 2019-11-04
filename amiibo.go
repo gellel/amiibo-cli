@@ -43,6 +43,7 @@ type amiibo struct {
 	TagID           string       `json:"tag_id"`
 	Timestamp       time.Time    `json:"timestamp"`
 	Type            string       `json:"type"`
+	TypeAlias       string       `json:"type_alias"`
 	UnixTimestamp   int64        `json:"unix_timestamp"`
 	UPC             string       `json:"upc"`
 	URL             *address     `json:"url"`
@@ -80,7 +81,12 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		overview     string
 		presentedBy  string
 		price        string
+		series       string
+		slug         string
 		tagID        string
+		typeAlias    string
+		typeOf       string
+		UPC          string
 	)
 
 	if c != nil {
@@ -88,9 +94,9 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		//c.Image
 		isRelatedTo = c.IsRelatedTo
 		isReleased, _ = strconv.ParseBool(c.IsReleased)
-		name = regexpName.ReplaceAllString(c.Name, "")
+		name = stripAmiiboName(c.Name)
 		tagID = c.TagID
-		//c.Type
+		typeOf = c.Type
 		//c.URL
 	}
 	if l != nil {
@@ -103,22 +109,22 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		game = l.GameCode
 		hex = l.HexCode
 		isReleased = l.IsReleased
-		name = regexpName.ReplaceAllString(l.AmiiboName, "")
-		overview = l.OverviewDescription
+		name = stripAmiiboName(l.AmiiboName)
+		overview = stripAmiiboHTML(l.OverviewDescription)
 		presentedBy = stripAmiiboPresentedBy(l.PresentedBy)
 		price = l.Price
 		//l.ReleaseDateMask
-		//l.Series
-		//l.Slug
-		//l.Type
-		//l.UPC
+		series = l.Series
+		slug = l.Slug
+		typeAlias = l.Type
+		UPC = l.UPC
 		//l.UnixTimestamp
 	}
 	if i != nil {
 		description = i.Description
 		lastModified = i.LastModified
 		//i.Path
-		name = regexpName.ReplaceAllString(i.Title, "")
+		name = stripAmiiboName(i.Title)
 		//i.URL
 	}
 	a = &amiibo{
@@ -136,7 +142,12 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		Overview:     overview,
 		PresentedBy:  presentedBy,
 		Price:        price,
-		TagID:        tagID}
+		Series:       series,
+		Slug:         slug,
+		TagID:        tagID,
+		Type:         typeOf,
+		TypeAlias:    typeAlias,
+		UPC:          UPC}
 
 	return a, nil
 }
