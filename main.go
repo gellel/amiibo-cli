@@ -59,7 +59,7 @@ var (
 	regexpHTML = regexp.MustCompile(`(<[^>]*>|\n(\s{1,})?)`)
 )
 var (
-	regexpName = regexp.MustCompile(`(\&\#[0-9]+\;|™)`)
+	regexpName = regexp.MustCompile(`(\&\#[0-9]+\;|™|\(|\))`)
 )
 var (
 	regexpSpaces = regexp.MustCompile(`\s{2,}`)

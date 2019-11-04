@@ -6,6 +6,7 @@ import (
 )
 
 func TestMix(t *testing.T) {
+	fmt.Println(compatabilityURI)
 	m, err := getMix()
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -15,9 +16,12 @@ func TestMix(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	for k, v := range *x {
-		fmt.Println(k, "\t", v.compatabilityAmiibo != nil, v.lineupAmiibo != nil, v.lineupItem != nil)
-	}
+	newAmiiboMap(x)
+	/*
+		for k, v := range *x {
+			fmt.Println(k, "\t", v.compatabilityAmiibo != nil, v.lineupAmiibo != nil, v.lineupItem != nil)
+		}
+	*/
 	/*
 		a, _ := newCompatabilityAmiiboMap(m.CompatabilityAmiibo)
 

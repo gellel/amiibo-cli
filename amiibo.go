@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -30,7 +31,9 @@ type amiibo struct {
 	IsRelatedTo     string       `json:"is_related_to"`
 	IsReleased      bool         `json:"is_released"`
 	Language        language.Tag `json:"language"`
+	LastModified    int64        `json:"last_modified"`
 	Name            string       `json:"name"`
+	Overview        string       `json:"overview"`
 	PageURL         *address     `json:"page"`
 	PresentedBy     string       `json:"presented_by"`
 	Price           string       `json:"price"`
@@ -53,100 +56,89 @@ func marshalAmiibo(a *amiibo) (*[]byte, error) {
 	return marshal(a)
 }
 
-func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo) (*amiibo, error) {
-	const (
-		template string = "%s%s"
-	)
+func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo, error) {
 	var (
-		a              *amiibo
-		boxAddress     *address
-		currency       = currency.USD.String()
-		detailsAddress *address
-		err            error
-		figureAddress  *address
-		imageAddress   *address
-		language       = language.AmericanEnglish
-		ok             bool
-		pageAddress    *address
-		t              time.Time
-		uAddress       *address
+		ok bool
 	)
-	ok = (c != nil)
+	ok = (c != nil) || (l != nil) || (i != nil)
 	if !ok {
-		return nil, fmt.Errorf("*c is nil")
+		return nil, fmt.Errorf("*c, *l and *i are nil")
 	}
-	ok = (l != nil)
-	if !ok {
-		return nil, fmt.Errorf("*l is nil")
+	var (
+		a            *amiibo
+		currency     = currency.USD.String()
+		description  string
+		franchise    string
+		game         string
+		hex          string
+		ID           string
+		isRelatedTo  string
+		isReleased   bool
+		language     = language.AmericanEnglish
+		lastModified int64
+		name         string
+		overview     string
+		presentedBy  string
+		price        string
+		tagID        string
+	)
+
+	if c != nil {
+		ID = c.ID
+		//c.Image
+		isRelatedTo = c.IsRelatedTo
+		isReleased, _ = strconv.ParseBool(c.IsReleased)
+		name = regexpName.ReplaceAllString(c.Name, "")
+		tagID = c.TagID
+		//c.Type
+		//c.URL
 	}
-	ok = (c.URL == l.DetailsURL)
-	if !ok {
-		return nil, fmt.Errorf("*c and *l do not share a common url")
+	if l != nil {
+		//l.AmiiboPage
+		//l.BoxArtURL
+		//l.DetailsPath
+		//l.DetailsURL
+		//l.FigureURL
+		franchise = l.Franchise
+		game = l.GameCode
+		hex = l.HexCode
+		isReleased = l.IsReleased
+		name = regexpName.ReplaceAllString(l.AmiiboName, "")
+		overview = l.OverviewDescription
+		presentedBy = stripAmiiboPresentedBy(l.PresentedBy)
+		price = l.Price
+		//l.ReleaseDateMask
+		//l.Series
+		//l.Slug
+		//l.Type
+		//l.UPC
+		//l.UnixTimestamp
 	}
-	ok = (c.Name == l.AmiiboName)
-	if !ok {
-		return nil, fmt.Errorf("*c and *l do not share a common name")
+	if i != nil {
+		description = i.Description
+		lastModified = i.LastModified
+		//i.Path
+		name = regexpName.ReplaceAllString(i.Title, "")
+		//i.URL
 	}
-	boxAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.BoxArtURL))
-	ok = (err == nil)
-	if !ok {
-		return nil, fmt.Errorf("cannot parse %s address: err %s", "box", err.Error())
-	}
-	detailsAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.DetailsURL))
-	ok = (err == nil)
-	if !ok {
-		return nil, fmt.Errorf("cannot parse %s address: err %s", "details", err.Error())
-	}
-	figureAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.FigureURL))
-	ok = (err == nil)
-	if !ok {
-		return nil, fmt.Errorf("cannot parse %s address: err %s", "figure", err.Error())
-	}
-	imageAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, c.Image))
-	ok = (err == nil)
-	if !ok {
-		return nil, fmt.Errorf("cannot parse %s address: err %s", "image", err.Error())
-	}
-	pageAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, l.AmiiboPage))
-	ok = (err == nil)
-	if !ok {
-		return nil, fmt.Errorf("cannot parse %s address: err %s", "page", err.Error())
-	}
-	uAddress, err = newAddress(fmt.Sprintf(template, nintendoURL, c.URL))
-	ok = (err == nil)
-	if !ok {
-		return nil, fmt.Errorf("cannot parse %s address: err %s", "url", err.Error())
-	}
-	t = (time.Unix(l.UnixTimestamp, 0).UTC())
 	a = &amiibo{
-		BoxArtURL:       boxAddress,
-		Currency:        currency,
-		Description:     stripAmiiboHTML(l.OverviewDescription),
-		DetailsPath:     l.DetailsPath,
-		DetailsURL:      detailsAddress,
-		FigureURL:       figureAddress,
-		Franchise:       l.Franchise,
-		GameCode:        l.GameCode,
-		HexCode:         l.HexCode,
-		ID:              c.ID,
-		ImageURL:        imageAddress,
-		IsRelatedTo:     c.IsRelatedTo,
-		IsReleased:      l.IsReleased,
-		Language:        language,
-		Name:            stripAmiiboName(c.Name),
-		PageURL:         pageAddress,
-		PresentedBy:     l.PresentedBy,
-		Price:           l.Price,
-		ReleaseDateMask: c.ReleaseDateMask,
-		Series:          l.Series,
-		Slug:            l.Slug,
-		TagID:           c.TagID,
-		Timestamp:       t,
-		Type:            c.Type,
-		UnixTimestamp:   l.UnixTimestamp,
-		UPC:             l.UPC,
-		URL:             uAddress}
-	return a, err
+		Currency:     currency,
+		Description:  description,
+		Franchise:    franchise,
+		GameCode:     game,
+		HexCode:      hex,
+		ID:           ID,
+		IsRelatedTo:  isRelatedTo,
+		IsReleased:   isReleased,
+		Language:     language,
+		LastModified: lastModified,
+		Name:         name,
+		Overview:     overview,
+		PresentedBy:  presentedBy,
+		Price:        price,
+		TagID:        tagID}
+
+	return a, nil
 }
 
 func stripAmiiboHTML(s string) string {
@@ -157,6 +149,10 @@ func stripAmiiboHTML(s string) string {
 
 func stripAmiiboName(s string) string {
 	return (regexpName.ReplaceAllString(s, ""))
+}
+
+func stripAmiiboPresentedBy(s string) string {
+	return strings.TrimPrefix(s, "noa:publisher/")
 }
 
 func stringifyMarshalAmiibo(a *amiibo) string {

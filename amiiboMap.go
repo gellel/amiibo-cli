@@ -21,8 +21,11 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 		return nil, fmt.Errorf("*m is empty")
 	}
 	for _, v := range *m {
-		a, err = newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo)
+		a, err = newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo, v.lineupItem)
 		if err != nil {
+			continue
+		}
+		if a == nil {
 			continue
 		}
 		x[a.ID] = a
