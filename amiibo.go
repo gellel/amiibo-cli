@@ -36,6 +36,7 @@ type amiibo struct {
 	Name            string       `json:"name"`
 	Overview        string       `json:"overview"`
 	PageURL         *address     `json:"page"`
+	Path            string       `json:"path"`
 	PresentedBy     string       `json:"presented_by"`
 	Price           string       `json:"price"`
 	ReleaseDateMask string       `json:"release_date_mask"`
@@ -45,7 +46,7 @@ type amiibo struct {
 	Timestamp       time.Time    `json:"timestamp"`
 	Type            string       `json:"type"`
 	TypeAlias       string       `json:"type_alias"`
-	UnixTimestamp   int64        `json:"unix_timestamp"`
+	Unix            int64        `json:"unix"`
 	UPC             string       `json:"upc"`
 	URI             string       `json:"uri"`
 	URL             *address     `json:"url"`
@@ -71,6 +72,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		a               *amiibo
 		currency        = currency.USD.String()
 		description     string
+		detailsPath     string
 		detailsURL      *address
 		figureURL       *address
 		franchise       string
@@ -83,14 +85,18 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		lastModified    int64
 		name            string
 		overview        string
+		pageURL         *address
+		path            string
 		presentedBy     string
 		price           string
 		releaseDateMask string
 		series          string
 		slug            string
 		tagID           string
+		timestamp       time.Time
 		typeAlias       string
 		typeOf          string
+		unix            int64
 		UPC             string
 		URI             string
 		URL             *address
@@ -107,9 +113,8 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		URL, _ = newAddress(c.URL)
 	}
 	if l != nil {
-		//l.AmiiboPage
 		//l.BoxArtURL
-		//l.DetailsPath
+		detailsPath = l.DetailsPath
 		detailsURL, _ = newAddress(l.DetailsURL)
 		figureURL, _ = newAddress(l.FigureURL)
 		franchise = l.Franchise
@@ -121,19 +126,21 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 			name = stripAmiiboName(l.AmiiboName)
 		}
 		overview = stripAmiiboHTML(l.OverviewDescription)
+		pageURL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, l.AmiiboPage))
 		presentedBy = stripAmiiboPresentedBy(l.PresentedBy)
 		price = l.Price
 		releaseDateMask = l.ReleaseDateMask
 		series = l.Series
 		slug = l.Slug
+		timestamp = time.Unix(l.UnixTimestamp, 0)
 		typeAlias = strings.ToLower(l.Type)
 		UPC = l.UPC
-		//l.UnixTimestamp
+		unix = l.UnixTimestamp
 	}
 	if i != nil {
 		description = i.Description
 		lastModified = i.LastModified
-		//i.Path
+		path = i.Path
 		ok = (len(name) != 0)
 		if !ok {
 			name = stripAmiiboName(i.Title)
@@ -147,6 +154,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 	a = &amiibo{
 		Currency:        currency,
 		Description:     description,
+		DetailsPath:     detailsPath,
 		DetailsURL:      detailsURL,
 		FigureURL:       figureURL,
 		Franchise:       franchise,
@@ -159,14 +167,18 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		LastModified:    lastModified,
 		Name:            name,
 		Overview:        overview,
+		Path:            path,
+		PageURL:         pageURL,
 		PresentedBy:     presentedBy,
 		Price:           price,
 		ReleaseDateMask: releaseDateMask,
 		Series:          series,
 		Slug:            slug,
 		TagID:           tagID,
+		Timestamp:       timestamp,
 		Type:            typeOf,
 		TypeAlias:       typeAlias,
+		Unix:            unix,
 		UPC:             UPC,
 		URI:             URI,
 		URL:             URL}
