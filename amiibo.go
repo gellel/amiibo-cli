@@ -18,7 +18,7 @@ var (
 )
 
 type amiibo struct {
-	BoxArtURL       *address     `json:"box_art_url"`
+	BoxImage        *image       `json:"box_image"`
 	Currency        string       `json:"currency"`
 	Description     string       `json:"description"`
 	DetailsPath     string       `json:"details_path"`
@@ -28,7 +28,7 @@ type amiibo struct {
 	GameCode        string       `json:"game_code"`
 	HexCode         string       `json:"hex_code"`
 	ID              string       `json:"id"`
-	ImageURL        *address     `json:"image_url"`
+	Image           *image       `json:"image"`
 	IsRelatedTo     string       `json:"is_related_to"`
 	IsReleased      bool         `json:"is_released"`
 	Language        language.Tag `json:"language"`
@@ -70,6 +70,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 	}
 	var (
 		a               *amiibo
+		boxImage        *image
 		currency        = currency.USD.String()
 		description     string
 		detailsPath     string
@@ -79,6 +80,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		game            string
 		hex             string
 		ID              string
+		image           *image
 		isRelatedTo     string
 		isReleased      bool
 		language        = language.AmericanEnglish
@@ -101,10 +103,9 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		URI             string
 		URL             *address
 	)
-
 	if c != nil {
 		ID = c.ID
-		//c.Image
+		image, _ = newImage(fmt.Sprintf("%s%s", nintendoURL, c.Image))
 		isRelatedTo = c.IsRelatedTo
 		isReleased, _ = strconv.ParseBool(c.IsReleased)
 		name = stripAmiiboName(c.Name)
@@ -113,10 +114,10 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		URL, _ = newAddress(c.URL)
 	}
 	if l != nil {
-		//l.BoxArtURL
+		boxImage, _ = newImage(fmt.Sprintf("%s%s", nintendoURL, l.BoxArtURL))
 		detailsPath = l.DetailsPath
-		detailsURL, _ = newAddress(l.DetailsURL)
-		figureURL, _ = newAddress(l.FigureURL)
+		detailsURL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, l.DetailsURL))
+		figureURL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, l.FigureURL))
 		franchise = l.Franchise
 		game = l.GameCode
 		hex = l.HexCode
@@ -147,11 +148,12 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		}
 		ok = (URL != nil)
 		if !ok {
-			URL, _ = newAddress(i.URL)
+			URL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, i.URL))
 		}
 	}
 	URI = makeAmiiboURI(name)
 	a = &amiibo{
+		BoxImage:        boxImage,
 		Currency:        currency,
 		Description:     description,
 		DetailsPath:     detailsPath,
@@ -161,6 +163,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		GameCode:        game,
 		HexCode:         hex,
 		ID:              ID,
+		Image:           image,
 		IsRelatedTo:     isRelatedTo,
 		IsReleased:      isReleased,
 		Language:        language,
