@@ -5,6 +5,10 @@ import (
 	"os"
 	"regexp"
 	"text/tabwriter"
+	"unicode"
+
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 )
 
 const (
@@ -58,11 +62,21 @@ var (
 var (
 	regexpHTML = regexp.MustCompile(`(<[^>]*>|\n(\s{1,})?)`)
 )
+
 var (
 	regexpName = regexp.MustCompile(`(\&\#[0-9]+\;|™|\(|\))`)
 )
+
 var (
 	regexpSpaces = regexp.MustCompile(`\s{2,}`)
+)
+
+var (
+	regexpUnderscore = regexp.MustCompile(`\_{2,}`)
+)
+
+var (
+	transformer = transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool { return unicode.Is(unicode.Mn, r) }), norm.NFC)
 )
 
 func main() {

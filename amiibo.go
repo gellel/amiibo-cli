@@ -10,6 +10,7 @@ import (
 
 	"golang.org/x/text/currency"
 	"golang.org/x/text/language"
+	"golang.org/x/text/transform"
 )
 
 var (
@@ -176,6 +177,8 @@ func makeAmiiboURI(s string) string {
 	s = strings.ReplaceAll(s, " ", "-")
 	s = strings.ReplaceAll(s, "-", "_")
 	s = strings.ToLower(s)
+	s = regexpUnderscore.ReplaceAllString(s, "")
+	s, _, _ = transform.String(transformer, s)
 	return s
 }
 
