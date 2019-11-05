@@ -16,7 +16,10 @@ func TestMix(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	newAmiiboMap(x)
+	z, _ := newAmiiboMap(x)
+	for _, a := range *z {
+		fmt.Println(stringifyMarshal(a))
+	}
 	/*
 		for k, v := range *x {
 			fmt.Println(k, "\t", v.compatabilityAmiibo != nil, v.lineupAmiibo != nil, v.lineupItem != nil)

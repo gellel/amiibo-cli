@@ -68,6 +68,9 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 	if !ok {
 		return nil, fmt.Errorf("*c, *l and *i are nil")
 	}
+	const (
+		template string = "%s%s"
+	)
 	var (
 		a               *amiibo
 		boxImage        *image
@@ -105,19 +108,19 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 	)
 	if c != nil {
 		ID = c.ID
-		image, _ = newImage(fmt.Sprintf("%s%s", nintendoURL, c.Image))
+		image, _ = newImage(fmt.Sprintf(template, nintendoURL, c.Image))
 		isRelatedTo = c.IsRelatedTo
 		isReleased, _ = strconv.ParseBool(c.IsReleased)
 		name = stripAmiiboName(c.Name)
 		tagID = c.TagID
 		typeOf = c.Type
-		URL, _ = newAddress(c.URL)
+		URL, _ = newAddress(fmt.Sprintf(template, nintendoURL, c.URL))
 	}
 	if l != nil {
-		boxImage, _ = newImage(fmt.Sprintf("%s%s", nintendoURL, l.BoxArtURL))
+		boxImage, _ = newImage(fmt.Sprintf(template, nintendoURL, l.BoxArtURL))
 		detailsPath = l.DetailsPath
-		detailsURL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, l.DetailsURL))
-		figureURL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, l.FigureURL))
+		detailsURL, _ = newAddress(fmt.Sprintf(template, nintendoURL, l.DetailsURL))
+		figureURL, _ = newAddress(fmt.Sprintf(template, nintendoURL, l.FigureURL))
 		franchise = l.Franchise
 		game = l.GameCode
 		hex = l.HexCode
@@ -127,7 +130,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 			name = stripAmiiboName(l.AmiiboName)
 		}
 		overview = stripAmiiboHTML(l.OverviewDescription)
-		pageURL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, l.AmiiboPage))
+		pageURL, _ = newAddress(fmt.Sprintf(template, nintendoURL, l.AmiiboPage))
 		presentedBy = stripAmiiboPresentedBy(l.PresentedBy)
 		price = l.Price
 		releaseDateMask = l.ReleaseDateMask
@@ -148,7 +151,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		}
 		ok = (URL != nil)
 		if !ok {
-			URL, _ = newAddress(fmt.Sprintf("%s%s", nintendoURL, i.URL))
+			URL, _ = newAddress(fmt.Sprintf(template, nintendoURL, i.URL))
 		}
 	}
 	URI = makeAmiiboURI(name)
