@@ -6,20 +6,24 @@ import (
 )
 
 func TestMix(t *testing.T) {
-	fmt.Println(compatabilityURI)
 	m, err := getMix()
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 
-	x, err := newMixAmiiboMapFromMix(m)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
-	z, _ := newAmiiboMap(x)
-	for _, a := range *z {
-		fmt.Println(stringifyMarshal(a))
-	}
+	fmt.Println(stringifyMarshal(m.CompatabilityItem[0]))
+	fmt.Println(stringifyMarshal(m.CompatabilityGame[0]))
+	/*
+		x, err := newMixAmiiboMapFromMix(m)
+		if err != nil {
+			t.Fatalf(err.Error())
+		}
+		z, _ := newAmiiboMap(x)
+		for _, a := range *z {
+			fmt.Println(stringifyMarshal(a))
+		}
+	*/
+	//newMixItemMapFromMix(m)
 	/*
 		for k, v := range *x {
 			fmt.Println(k, "\t", v.compatabilityAmiibo != nil, v.lineupAmiibo != nil, v.lineupItem != nil)

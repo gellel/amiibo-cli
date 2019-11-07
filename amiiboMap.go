@@ -28,7 +28,7 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 		if a == nil {
 			continue
 		}
-		x[a.ID] = a
+		x[a.URI] = a
 	}
 	return &x, err
 }
