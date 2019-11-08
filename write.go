@@ -3,9 +3,44 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
+
+func readFile(fullpath string) (*[]byte, error) {
+	var (
+		b   []byte
+		err error
+		ok  bool
+	)
+	b, err = ioutil.ReadFile(fullpath)
+	ok = err != nil
+	if !ok {
+		return nil, err
+	}
+	return &b, err
+}
+
+func readFolder(fullpath string) {
+	var (
+		err   error
+		files []string
+	)
+	err = filepath.Walk(fullpath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			panic(err)
+		}
+		files = append(files, path)
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+		fmt.Println(file)
+	}
+}
 
 func writeFile(path, folder, name, ext string, b *[]byte) error {
 	var (
