@@ -11,8 +11,13 @@ func TestMix(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 
-	fmt.Println(stringifyMarshal(m.CompatabilityItem[0]))
-	fmt.Println(stringifyMarshal(m.CompatabilityGame[0]))
+	x, err := newMixGameMapFromMix(m)
+	if err != nil {
+		panic(err)
+	}
+	for k, v := range *x {
+		fmt.Println(k, "->", v.compatabilityGame != nil, v.compatabilityItem != nil)
+	}
 	/*
 		x, err := newMixAmiiboMapFromMix(m)
 		if err != nil {

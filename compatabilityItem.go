@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"path/filepath"
+	"strings"
 	"text/tabwriter"
 )
 
@@ -14,6 +17,15 @@ type compatabilityItem struct {
 	Path         string `json:"path"`
 	Title        string `json:"title"`
 	URL          string `json:"url"`
+}
+
+func (c *compatabilityItem) Key() string {
+	var (
+		s = fmt.Sprintf("%s/", strings.TrimSuffix(c.URL, ".html"))
+	)
+	s = filepath.Dir(s)
+	s = filepath.Base(s)
+	return s
 }
 
 func (c *compatabilityItem) Value() interface{} {

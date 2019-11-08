@@ -19,7 +19,7 @@ func newCompatabilityGameMap(c []*compatabilityGame) (*compatabilityGameMap, err
 		return nil, fmt.Errorf("*c is empty")
 	}
 	for _, v := range c {
-		m[v.URL] = v
+		m[v.Key()] = v
 	}
 	return &m, err
 }

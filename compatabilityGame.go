@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"path/filepath"
 	"text/tabwriter"
 )
 
@@ -17,6 +19,15 @@ type compatabilityGame struct {
 	ReleaseDateMask string `json:"releaseDateMask"`
 	Type            string `json:"type"`
 	URL             string `json:"url"`
+}
+
+func (c *compatabilityGame) Key() string {
+	var (
+		s = fmt.Sprintf("%s/", c.URL)
+	)
+	s = filepath.Dir(s)
+	s = filepath.Base(s)
+	return s
 }
 
 func (c *compatabilityGame) Value() interface{} {
