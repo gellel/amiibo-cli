@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/text/currency"
 	"golang.org/x/text/language"
-	"golang.org/x/text/transform"
 )
 
 var (
@@ -19,6 +18,7 @@ var (
 
 type amiibo struct {
 	BoxImage        *image       `json:"box_image"`
+	Complete        bool         `json:"complete"`
 	Currency        string       `json:"currency"`
 	Description     string       `json:"description"`
 	DetailsPath     string       `json:"details_path"`
@@ -74,6 +74,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 	var (
 		a               *amiibo
 		boxImage        *image
+		complete        bool
 		currency        = currency.USD.String()
 		description     string
 		detailsPath     string
@@ -106,6 +107,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		URI             string
 		URL             *address
 	)
+	complete = (c != nil) && (l != nil) && (i != nil)
 	if c != nil {
 		ID = c.ID
 		image, _ = newImage(fmt.Sprintf(template, nintendoURL, c.Image))
@@ -154,9 +156,10 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 			URL, _ = newAddress(fmt.Sprintf(template, nintendoURL, i.URL))
 		}
 	}
-	URI = makeAmiiboURI(name)
+	URI = normalizeURI(name)
 	a = &amiibo{
 		BoxImage:        boxImage,
+		Complete:        complete,
 		Currency:        currency,
 		Description:     description,
 		DetailsPath:     detailsPath,
@@ -189,15 +192,6 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		URI:             URI,
 		URL:             URL}
 	return a, nil
-}
-
-func makeAmiiboURI(s string) string {
-	s = strings.ReplaceAll(s, " ", "-")
-	s = strings.ReplaceAll(s, "-", "_")
-	s = strings.ToLower(s)
-	s = regexpUnderscore.ReplaceAllString(s, "")
-	s, _, _ = transform.String(transformer, s)
-	return s
 }
 
 func stripAmiiboHTML(s string) string {

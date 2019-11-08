@@ -7,8 +7,8 @@ type gameMap map[string]*game
 func newGameMap(m *mixGameMap) (*gameMap, error) {
 	var (
 		err error
-		//g   *game
-		ok bool
+		g   *game
+		ok  bool
 
 		x = gameMap{}
 	)
@@ -21,7 +21,14 @@ func newGameMap(m *mixGameMap) (*gameMap, error) {
 		return nil, fmt.Errorf("*m is empty")
 	}
 	for _, v := range *m {
-		newGame(v.compatabilityGame, v.compatabilityItem)
+		g, err = newGame(v.compatabilityGame, v.compatabilityItem)
+		if err != nil {
+			continue
+		}
+		if g == nil {
+			continue
+		}
+		x[g.URI] = g
 	}
 	return &x, err
 }

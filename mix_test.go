@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -17,7 +18,25 @@ func TestMix(t *testing.T) {
 	//for k, v := range *x {
 	//	fmt.Println(k, "->", v.compatabilityGame != nil, v.compatabilityItem != nil)
 	//}
-	newGameMap(x)
+	y, err := newGameMap(x)
+	if err != nil {
+		panic(err)
+	}
+	for k, v := range *y {
+		//fmt.Println(k, "->", stringifyMarshal(v))
+		fmt.Println(k, "->", "\t", v.Title)
+	}
+	a, err := newMixAmiiboMapFromMix(m)
+	if err != nil {
+		panic(err)
+	}
+	z, err := newAmiiboMap(a)
+	if err != nil {
+		panic(err)
+	}
+	for k, v := range *z {
+		fmt.Println(k, "->", "\t", v.Name)
+	}
 	/*
 		x, err := newMixAmiiboMapFromMix(m)
 		if err != nil {

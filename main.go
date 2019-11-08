@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"text/tabwriter"
 	"unicode"
 
@@ -72,7 +72,15 @@ var (
 )
 
 var (
-	regexpUnderscore = regexp.MustCompile(`\_{2,}`)
+	regexpHyphens = regexp.MustCompile(`\-{2,}`)
+)
+
+var (
+	regexpUnwantedURI = regexp.MustCompile(`[^a-zA-Z0-9&]+`)
+)
+
+var (
+	replacerURI = strings.NewReplacer([]string{"&", "and", "'", ""}...)
 )
 
 var (
@@ -80,7 +88,4 @@ var (
 )
 
 func main() {
-	fmt.Println(compatabilityURI)
-	fmt.Println("-")
-	fmt.Println(lineupURI)
 }

@@ -5,9 +5,21 @@ import (
 	"reflect"
 	"strings"
 	"text/tabwriter"
+
+	"golang.org/x/text/transform"
 )
 
-func  normalizeAmiiboMapKey(s string) string {
+func normalizeURI(s string) string {
+	s, _, _ = transform.String(transformer, s)
+	s = replacerURI.Replace(s)
+	s = regexpUnwantedURI.ReplaceAllString(s, "-")
+	s = regexpHyphens.ReplaceAllString(s, "")
+	s = strings.TrimSuffix(s, "-")
+	s = strings.ToLower(s)
+	return s
+}
+
+func normalizeAmiiboMapKey(s string) string {
 	const (
 		p1 string = "/content/noa/en_US"
 		p2 string = "/amiibo/detail/"
