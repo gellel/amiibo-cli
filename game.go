@@ -111,6 +111,20 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 	return g, nil
 }
 
+func readGame(fullpath string) (*game, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalGame(b)
+}
+
 func tableGame(w *tabwriter.Writer, g *game) error {
 	return printlnTable(w, *g)
 }

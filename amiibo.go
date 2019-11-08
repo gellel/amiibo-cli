@@ -194,6 +194,20 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 	return a, nil
 }
 
+func readAmiibo(fullpath string) (*amiibo, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalAmiibo(b)
+}
+
 func stripAmiiboHTML(s string) string {
 	s = regexpSpaces.ReplaceAllString(regexpHTML.ReplaceAllString(s, " "), " ")
 	s = html.UnescapeString(strings.TrimSpace(s))
