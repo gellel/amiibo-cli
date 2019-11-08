@@ -53,3 +53,23 @@ func newMixGameMap(c *compatabilityGameMap, i *compatabilityItemMap) (*mixGameMa
 	wg.Wait()
 	return &m, err
 }
+
+func newMixGameMapFromMix(m *mix) (*mixGameMap, error) {
+	var (
+		c  *compatabilityGameMap
+		i  *compatabilityItemMap
+		wg sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		c, _ = newCompatabilityGameMap(m.CompatabilityGame)
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		i, _ = newCompatabilityItemMap(m.CompatabilityItem)
+	}()
+	wg.Wait()
+	return newMixGameMap(c, i)
+}

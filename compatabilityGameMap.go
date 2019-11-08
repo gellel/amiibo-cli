@@ -4,7 +4,7 @@ import "fmt"
 
 type compatabilityGameMap map[string]*compatabilityGame
 
-func newcompatabilityGameMap(c []*compatabilityGame) (*compatabilityGameMap, error) {
+func newCompatabilityGameMap(c []*compatabilityGame) (*compatabilityGameMap, error) {
 	var (
 		err error
 		m   = compatabilityGameMap{}
