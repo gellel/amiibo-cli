@@ -24,7 +24,7 @@ func TestMix(t *testing.T) {
 	}
 	for k, v := range *y {
 		//fmt.Println(k, "->", stringifyMarshal(v))
-		fmt.Println(k, "->", "\t", v.Title)
+		fmt.Println(k, "->", "\t", v.Timestamp)
 	}
 	a, err := newMixAmiiboMapFromMix(m)
 	if err != nil {
@@ -35,7 +35,8 @@ func TestMix(t *testing.T) {
 		panic(err)
 	}
 	for k, v := range *z {
-		fmt.Println(k, "->", "\t", v.Name)
+		fmt.Println(k, "->", "\t", v.Timestamp)
+
 	}
 	/*
 		x, err := newMixAmiiboMapFromMix(m)

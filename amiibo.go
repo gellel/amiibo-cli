@@ -138,7 +138,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		releaseDateMask = l.ReleaseDateMask
 		series = l.Series
 		slug = l.Slug
-		timestamp = time.Unix(l.UnixTimestamp, 0)
+		timestamp = time.Unix(l.UnixTimestamp, 0).UTC()
 		typeAlias = strings.ToLower(l.Type)
 		UPC = l.UPC
 		unix = l.UnixTimestamp
@@ -241,5 +241,5 @@ func writeAmiibo(path, folder string, a *amiibo) error {
 	if !ok {
 		return err
 	}
-	return writeJSON(path, folder, a.Name, b)
+	return writeJSON(path, folder, a.URI, b)
 }
