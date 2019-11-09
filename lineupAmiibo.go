@@ -38,6 +38,20 @@ func marshalLineupAmiibo(l *lineupAmiibo) (*[]byte, error) {
 	return marshal(l)
 }
 
+func readLineupAmiibo(fullpath string) (*lineupAmiibo, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalLineupAmiibo(b)
+}
+
 func stringifyMarshalLineupAmiibo(l *lineupAmiibo) string {
 	return stringifyMarshal(l)
 }

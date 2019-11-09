@@ -87,5 +87,4 @@ var (
 	transformer = transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool { return unicode.Is(unicode.Mn, r) }), norm.NFC)
 )
 
-func main() {
-}
+func main() {}

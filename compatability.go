@@ -42,6 +42,20 @@ func marshalCompatability(c *compatability) (*[]byte, error) {
 	return marshal(c)
 }
 
+func readCompatability(fullpath string) (*compatability, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalCompatability(b)
+}
+
 func tableCompatability(w *tabwriter.Writer, c *compatability) error {
 	return printlnTable(w, *c)
 }

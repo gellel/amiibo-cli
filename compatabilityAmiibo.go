@@ -33,6 +33,20 @@ func marshalCompatabilityAmiibo(c *compatabilityAmiibo) (*[]byte, error) {
 	return marshal(c)
 }
 
+func readCompatabilityAmiibo(fullpath string) (*compatabilityAmiibo, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalCompatabilityAmiibo(b)
+}
+
 func stringifyMarshalCompatabilityAmiibo(c *compatabilityAmiibo) string {
 	return stringifyMarshal(c)
 }

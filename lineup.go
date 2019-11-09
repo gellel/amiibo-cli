@@ -47,6 +47,20 @@ func marshalLineup(l *lineup) (*[]byte, error) {
 	return marshal(l)
 }
 
+func readLineup(fullpath string) (*lineup, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalLineup(b)
+}
+
 func tableLineup(w *tabwriter.Writer, l *lineup) error {
 	return printlnTable(w, *l)
 }

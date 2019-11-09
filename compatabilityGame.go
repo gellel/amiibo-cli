@@ -38,6 +38,20 @@ func marshalCompatabilityGame(c *compatabilityGame) (*[]byte, error) {
 	return marshal(c)
 }
 
+func readCompatabilityGame(fullpath string) (*compatabilityGame, error) {
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = readFile(fullpath)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return unmarshalCompatabilityGame(b)
+}
+
 func tableCompatabilityGame(w *tabwriter.Writer, c *compatabilityGame) error {
 	return printlnTable(w, *c)
 }
