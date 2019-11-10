@@ -34,6 +34,20 @@ func getCompatability() (*compatability, error) {
 	return unmarshalCompatability(x.Body)
 }
 
+func getAndWriteCompatability(path, folder string) error {
+	var (
+		c   *compatability
+		err error
+		ok  bool
+	)
+	c, err = getCompatability()
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeCompatability(path, folder, c)
+}
+
 func fillCompatability(c *compatability) *compatability {
 	return c
 }

@@ -39,6 +39,20 @@ func getLineup() (*lineup, error) {
 	return unmarshalLineup(x.Body)
 }
 
+func getAndWriteLineup(path, folder string) error {
+	var (
+		err error
+		l   *lineup
+		ok  bool
+	)
+	l, err = getLineup()
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeLineup(path, folder, l)
+}
+
 func fillLineup(c *lineup) *lineup {
 	return c
 }
@@ -77,4 +91,21 @@ func unmarshalLineup(b *[]byte) (*lineup, error) {
 		return nil, err
 	}
 	return &c, err
+}
+
+func writeLineup(path, folder string, l *lineup) error {
+	const (
+		name string = "lineup"
+	)
+	var (
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshalLineup(l)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	return writeJSON(path, folder, name, b)
 }
