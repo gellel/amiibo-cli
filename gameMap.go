@@ -4,6 +4,15 @@ import "fmt"
 
 type gameMap map[string]*game
 
+func (m *gameMap) Get(key string) (*game, bool) {
+	var (
+		game *game
+		ok   bool
+	)
+	game, ok = ((*m)[key])
+	return game, ok
+}
+
 func newGameMap(m *mixGameMap) (*gameMap, error) {
 	var (
 		err error
