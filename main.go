@@ -1,12 +1,15 @@
 package main
 
 import (
+	"log"
+	"net/http"
 	"os"
 	"regexp"
 	"strings"
 	"text/tabwriter"
 	"unicode"
 
+	"github.com/gorilla/mux"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
@@ -87,4 +90,20 @@ var (
 	transformer = transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool { return unicode.Is(unicode.Mn, r) }), norm.NFC)
 )
 
-func main() {}
+func main() {
+	router := mux.NewRouter().StrictSlash(true)
+	m, err := getMix()
+	if err != nil {
+		panic(err)
+	}
+	gm, err := newMixGameMapFromMix(m)
+	if err != nil {
+		panic(err)
+	}
+	games, err := newGameMap(gm)
+	if err != nil {
+		panic(err)
+	}
+	router.Handle("/games/{name}", gameMuxName{games: games}).Methods("GET")
+	log.Fatal(http.ListenAndServe(":8080", router))
+}
