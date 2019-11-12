@@ -7,7 +7,7 @@ import (
 )
 
 type gameMuxName struct {
-	games *gameMap
+	Games *gameMap
 }
 
 func (m gameMuxName) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +21,7 @@ func (m gameMuxName) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		name = mux.Vars(r)[key]
 		ok   bool
 	)
-	g, ok = m.games.Get(name)
+	g, ok = m.Games.Get(name)
 	if !ok {
 		return
 	}
@@ -31,6 +31,6 @@ func (m gameMuxName) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Write(*b)
 }

@@ -13,6 +13,16 @@ func (m *gameMap) Get(key string) (*game, bool) {
 	return game, ok
 }
 
+func (m *gameMap) Values() []*game {
+	var (
+		games []*game
+	)
+	for _, game := range *m {
+		games = append(games, game)
+	}
+	return games
+}
+
 func newGameMap(m *mixGameMap) (*gameMap, error) {
 	var (
 		err error
