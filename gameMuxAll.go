@@ -9,6 +9,10 @@ type gameMuxAll struct {
 }
 
 func (m gameMuxAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	const (
+		contentType      string = "content-type"
+		contentTypeValue string = "application/json; charset=utf-8"
+	)
 	var (
 		b   *[]byte
 		err error
@@ -16,10 +20,12 @@ func (m gameMuxAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	)
 	b, err = marshal(&m.Games)
 	ok = (err == nil)
-	if !ok {
-		panic(err)
+	switch ok {
+	case true:
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set(contentType, contentTypeValue)
+		w.Write(*b)
+	default:
+		w.WriteHeader(http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-type", "application/json; charset=utf-8")
-	w.Write(*b)
 }
