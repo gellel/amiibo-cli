@@ -96,14 +96,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	gm, err := newMixGameMapFromMix(m)
-	if err != nil {
-		panic(err)
-	}
-	games, err := newGameMap(gm)
-	if err != nil {
-		panic(err)
-	}
 	am, err := newMixAmiiboMapFromMix(m)
 	if err != nil {
 		panic(err)
@@ -117,8 +109,23 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	bm, err := newByteMap(amiibos)
+	if err != nil {
+		panic(err)
+	}
+
+	gameMuxAll, err := newGameMuxAllFromMix(m)
+	if err != nil {
+		panic(err)
+	}
+	gameMuxName, err := newGameMuxNameFromMix(m)
+	if err != nil {
+		panic(err)
+	}
+
 	router.Handle("/amiibo", amiiboMuxAll{Amiibo: *as}).Methods(http.MethodGet)
-	router.Handle("/games", gameMuxAll{Games: games.Values()}).Methods(http.MethodGet)
-	router.Handle("/games/{name}", gameMuxName{Games: games}).Methods(http.MethodGet)
+	router.Handle("/amiibo/{name}", amiiboMuxName{byteMap: bm}).Methods(http.MethodGet)
+	router.Handle("/games", gameMuxAll).Methods(http.MethodGet)
+	router.Handle("/games/{name}", gameMuxName).Methods(http.MethodGet)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
