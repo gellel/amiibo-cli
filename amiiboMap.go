@@ -4,6 +4,16 @@ import "fmt"
 
 type amiiboMap map[string]*amiibo
 
+func (a *amiiboMap) Values() []*amiibo {
+	var (
+		amiibos []*amiibo
+	)
+	for _, amiibo := range *a {
+		amiibos = append(amiibos, amiibo)
+	}
+	return amiibos
+}
+
 func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 	var (
 		a   *amiibo
