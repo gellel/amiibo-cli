@@ -31,3 +31,39 @@ func (a amiiboMuxName) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write(*b)
 	w.WriteHeader(statusCode)
 }
+
+func newAmiiboMuxName(m *amiiboMap) (*amiiboMuxName, error) {
+	var (
+		a   amiiboMuxName
+		b   *byteMap
+		err error
+		ok  bool
+	)
+	b, err = newByteMap(m)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	a = amiiboMuxName{b}
+	return &a, err
+}
+
+func newAmiiboMuxNameFromMix(m *mix) (*amiiboMuxName, error) {
+	var (
+		err          error
+		amiiboMap    *amiiboMap
+		mixAmiiboMap *mixAmiiboMap
+		ok           bool
+	)
+	mixAmiiboMap, err = newMixAmiiboMapFromMix(m)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	amiiboMap, err = newAmiiboMap(mixAmiiboMap)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return newAmiiboMuxName(amiiboMap)
+}
