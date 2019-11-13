@@ -84,3 +84,17 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 	}
 	return &x, err
 }
+
+func newAmiiboMapFromMix(m *mix) (*amiiboMap, error) {
+	var (
+		err          error
+		mixAmiiboMap *mixAmiiboMap
+		ok           bool
+	)
+	mixAmiiboMap, err = newMixAmiiboMapFromMix(m)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return newAmiiboMap(mixAmiiboMap)
+}

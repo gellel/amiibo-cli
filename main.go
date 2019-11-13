@@ -9,7 +9,6 @@ import (
 	"text/tabwriter"
 	"unicode"
 
-	"github.com/gorilla/mux"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
@@ -91,41 +90,10 @@ var (
 )
 
 func main() {
-	router := mux.NewRouter().StrictSlash(true)
-	m, err := getMix()
-	if err != nil {
-		panic(err)
-	}
-	am, err := newMixAmiiboMapFromMix(m)
-	if err != nil {
-		panic(err)
-	}
-	amiibos, err := newAmiiboMap(am)
-	if err != nil {
-		panic(err)
-	}
-	s := amiibos.Values()
-	as, err := marshal(&s)
-	if err != nil {
-		panic(err)
-	}
-	bm, err := newByteMap(amiibos)
-	if err != nil {
-		panic(err)
-	}
 
-	gameMuxAll, err := newGameMuxAllFromMix(m)
+	router, err := getMux()
 	if err != nil {
 		panic(err)
 	}
-	gameMuxName, err := newGameMuxNameFromMix(m)
-	if err != nil {
-		panic(err)
-	}
-
-	router.Handle("/amiibo", amiiboMuxAll{Amiibo: *as}).Methods(http.MethodGet)
-	router.Handle("/amiibo/{name}", amiiboMuxName{byteMap: bm}).Methods(http.MethodGet)
-	router.Handle("/games", gameMuxAll).Methods(http.MethodGet)
-	router.Handle("/games/{name}", gameMuxName).Methods(http.MethodGet)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

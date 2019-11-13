@@ -15,3 +15,20 @@ func (a amiiboMuxAll) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write(a.Amiibo)
 	w.WriteHeader(http.StatusOK)
 }
+
+func newAmiiboMuxAll(s []*amiibo) (*amiiboMuxAll, error) {
+	var (
+		a   amiiboMuxAll
+		b   *[]byte
+		err error
+		ok  bool
+	)
+	b, err = marshal(&s)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	a = amiiboMuxAll{
+		Amiibo: *b}
+	return &a, err
+}

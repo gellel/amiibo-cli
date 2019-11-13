@@ -88,3 +88,17 @@ func newGameMap(m *mixGameMap) (*gameMap, error) {
 	}
 	return &x, err
 }
+
+func newGameMapFromMix(m *mix) (*gameMap, error) {
+	var (
+		err        error
+		mixGameMap *mixGameMap
+		ok         bool
+	)
+	mixGameMap, err = newMixGameMapFromMix(m)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return newGameMap(mixGameMap)
+}
