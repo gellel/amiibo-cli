@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"html"
+	"net/http"
 	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 
 	"golang.org/x/text/currency"
 	"golang.org/x/text/language"
@@ -17,43 +20,108 @@ var (
 )
 
 type amiibo struct {
-	BoxImage        *image       `json:"box_image"`
-	Complete        bool         `json:"complete"`
-	Currency        string       `json:"currency"`
-	Description     string       `json:"description"`
-	DetailsPath     string       `json:"details_path"`
-	DetailsURL      *address     `json:"details_url"`
-	FigureURL       *address     `json:"figure_url"`
-	Franchise       string       `json:"franchise"`
-	GameCode        string       `json:"game_code"`
-	HexCode         string       `json:"hex_code"`
-	ID              string       `json:"id"`
-	Image           *image       `json:"image"`
-	IsRelatedTo     string       `json:"is_related_to"`
-	IsReleased      bool         `json:"is_released"`
-	Language        language.Tag `json:"language"`
-	LastModified    int64        `json:"last_modified"`
-	Name            string       `json:"name"`
-	Overview        string       `json:"overview"`
-	PageURL         *address     `json:"page"`
-	Path            string       `json:"path"`
-	PresentedBy     string       `json:"presented_by"`
-	Price           string       `json:"price"`
-	ReleaseDateMask string       `json:"release_date_mask"`
-	Series          string       `json:"series"`
-	Slug            string       `json:"slug"`
-	TagID           string       `json:"tag_id"`
-	Timestamp       time.Time    `json:"timestamp"`
-	Type            string       `json:"type"`
-	TypeAlias       string       `json:"type_alias"`
-	Unix            int64        `json:"unix"`
-	UPC             string       `json:"upc"`
-	URI             string       `json:"uri"`
-	URL             *address     `json:"url"`
+	BoxImage          *image       `json:"box_image"`
+	Complete          bool         `json:"complete"`
+	CompatabilityURLs []*address   `json:"compatability_urls"`
+	Currency          string       `json:"currency"`
+	Description       string       `json:"description"`
+	DetailsPath       string       `json:"details_path"`
+	DetailsURL        *address     `json:"details_url"`
+	FigureURL         *address     `json:"figure_url"`
+	Franchise         string       `json:"franchise"`
+	GameCode          string       `json:"game_code"`
+	HexCode           string       `json:"hex_code"`
+	ID                string       `json:"id"`
+	Image             *image       `json:"image"`
+	IsRelatedTo       string       `json:"is_related_to"`
+	IsReleased        bool         `json:"is_released"`
+	Language          language.Tag `json:"language"`
+	LastModified      int64        `json:"last_modified"`
+	Name              string       `json:"name"`
+	Overview          string       `json:"overview"`
+	PageURL           *address     `json:"page"`
+	Path              string       `json:"path"`
+	PresentedBy       string       `json:"presented_by"`
+	Price             string       `json:"price"`
+	ReleaseDateMask   string       `json:"release_date_mask"`
+	Series            string       `json:"series"`
+	Slug              string       `json:"slug"`
+	TagID             string       `json:"tag_id"`
+	Timestamp         time.Time    `json:"timestamp"`
+	Type              string       `json:"type"`
+	TypeAlias         string       `json:"type_alias"`
+	Unix              int64        `json:"unix"`
+	UPC               string       `json:"upc"`
+	URI               string       `json:"uri"`
+	URL               *address     `json:"url"`
 }
 
 func (a *amiibo) Value() interface{} {
 	return *a
+}
+
+func getAmiiboCompatabilityURLs(a *amiibo) error {
+	const (
+		attrHref  string = "href"
+		childCSS  string = "a:nth-child(1)"
+		parentCSS string = "#game-set li"
+	)
+	var (
+		doc *goquery.Document
+		err error
+		ok  bool
+		req *http.Request
+		res *http.Response
+		s   *goquery.Selection
+	)
+	req, err = http.NewRequest(http.MethodGet, a.PageURL.URL, nil)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	res, err = (&http.Client{}).Do(req)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	ok = (res.StatusCode == http.StatusOK)
+	if !ok {
+		return fmt.Errorf(res.Status)
+	}
+	doc, err = goquery.NewDocumentFromResponse(res)
+	ok = (err == nil)
+	if !ok {
+		return err
+	}
+	s = doc.Find(parentCSS)
+	ok = (s.Length() != 0)
+	if !ok {
+		return err
+	}
+	s.Each(func(i int, s *goquery.Selection) {
+		var (
+			address *address
+			err     error
+			href    string
+			ok      bool
+		)
+		s = s.Find(childCSS).First()
+		ok = (s.Length() != 0)
+		if !ok {
+			return
+		}
+		href, ok = s.Attr(attrHref)
+		if !ok {
+			return
+		}
+		address, err = newAddress(href)
+		ok = (err == nil)
+		if !ok {
+			return
+		}
+		a.CompatabilityURLs = append(a.CompatabilityURLs, address)
+	})
+	return nil
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
