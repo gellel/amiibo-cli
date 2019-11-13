@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+var (
+	_ hashMap = (&amiiboMap{})
+)
+
 type amiiboMap map[string]*amiibo
 
 func (m *amiiboMap) Del(key string) bool {
