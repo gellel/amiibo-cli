@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/url"
+	"strings"
 	"text/tabwriter"
 )
 
@@ -15,6 +16,7 @@ type address struct {
 	Hostname string `json:"hostname"`
 	Path     string `json:"path"`
 	Scheme   string `json:"scheme"`
+	TLD      string `json:"tld"`
 	URL      string `json:"url"`
 }
 
@@ -44,6 +46,7 @@ func newAddress(rawurl string) (*address, error) {
 		Hostname: URL.Hostname(),
 		Path:     URL.Path,
 		Scheme:   URL.Scheme,
+		TLD:      URL.Host[:strings.IndexByte(URL.Host, '.')],
 		URL:      rawurl}
 	return a, err
 }
