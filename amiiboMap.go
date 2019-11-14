@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 var (
 	_ hashMap = (&amiiboMap{})
@@ -64,7 +67,9 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 	var (
 		a   *amiibo
 		err error
+		mu  sync.Mutex
 		ok  bool
+		wg  sync.WaitGroup
 
 		x = amiiboMap{}
 	)
@@ -77,15 +82,22 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 		return nil, fmt.Errorf("*m is empty")
 	}
 	for _, v := range *m {
-		a, err = newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo, v.lineupItem)
-		if err != nil {
-			continue
-		}
-		if a == nil {
-			continue
-		}
-		x[a.URI] = a
+		wg.Add(1)
+		go func(v *mixAmiibo) {
+			defer wg.Done()
+			a, err = newAmiibo(v.compatabilityAmiibo, v.lineupAmiibo, v.lineupItem)
+			if err != nil {
+				return
+			}
+			if a == nil {
+				return
+			}
+			mu.Lock()
+			x[a.URI] = a
+			mu.Unlock()
+		}(v)
 	}
+	wg.Wait()
 	return &x, err
 }
 

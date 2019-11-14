@@ -21,8 +21,8 @@ var (
 
 type amiibo struct {
 	BoxImage          *image       `json:"box_image"`
-	Complete          bool         `json:"complete"`
 	CompatabilityURLs []*address   `json:"compatability_urls"`
+	Complete          bool         `json:"complete"`
 	Currency          string       `json:"currency"`
 	Description       string       `json:"description"`
 	DetailsPath       string       `json:"details_path"`
@@ -60,43 +60,45 @@ func (a *amiibo) Value() interface{} {
 	return *a
 }
 
-func getAmiiboCompatabilityURLs(a *amiibo) error {
+func getAmiiboCompatabilityURLs(rawurl string) ([]*address, error) {
 	const (
 		attrHref  string = "href"
 		childCSS  string = "a:nth-child(1)"
 		parentCSS string = "#game-set li"
+		template  string = "%s%s"
 	)
 	var (
-		doc *goquery.Document
-		err error
-		ok  bool
-		req *http.Request
-		res *http.Response
-		s   *goquery.Selection
+		compatabilityURLs []*address
+		doc               *goquery.Document
+		err               error
+		ok                bool
+		req               *http.Request
+		res               *http.Response
+		s                 *goquery.Selection
 	)
-	req, err = http.NewRequest(http.MethodGet, a.PageURL.URL, nil)
+	req, err = http.NewRequest(http.MethodGet, rawurl, nil)
 	ok = (err == nil)
 	if !ok {
-		return err
+		return nil, err
 	}
 	res, err = (&http.Client{}).Do(req)
 	ok = (err == nil)
 	if !ok {
-		return err
+		return nil, err
 	}
 	ok = (res.StatusCode == http.StatusOK)
 	if !ok {
-		return fmt.Errorf(res.Status)
+		return nil, fmt.Errorf(res.Status)
 	}
 	doc, err = goquery.NewDocumentFromResponse(res)
 	ok = (err == nil)
 	if !ok {
-		return err
+		return nil, err
 	}
 	s = doc.Find(parentCSS)
 	ok = (s.Length() != 0)
 	if !ok {
-		return err
+		return nil, err
 	}
 	s.Each(func(i int, s *goquery.Selection) {
 		var (
@@ -114,14 +116,14 @@ func getAmiiboCompatabilityURLs(a *amiibo) error {
 		if !ok {
 			return
 		}
-		address, err = newAddress(href)
+		address, err = newAddress(fmt.Sprintf(template, nintendoURL, href))
 		ok = (err == nil)
 		if !ok {
 			return
 		}
-		a.CompatabilityURLs = append(a.CompatabilityURLs, address)
+		compatabilityURLs = append(compatabilityURLs, address)
 	})
-	return nil
+	return compatabilityURLs, err
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -140,40 +142,41 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		template string = "%s%s"
 	)
 	var (
-		a               *amiibo
-		boxImage        *image
-		complete        bool
-		currency        = currency.USD.String()
-		description     string
-		detailsPath     string
-		detailsURL      *address
-		figureURL       *address
-		franchise       string
-		game            string
-		hex             string
-		ID              string
-		image           *image
-		isRelatedTo     string
-		isReleased      bool
-		language        = language.AmericanEnglish
-		lastModified    int64
-		name            string
-		overview        string
-		pageURL         *address
-		path            string
-		presentedBy     string
-		price           string
-		releaseDateMask string
-		series          string
-		slug            string
-		tagID           string
-		timestamp       time.Time
-		typeAlias       string
-		typeOf          string
-		unix            int64
-		UPC             string
-		URI             string
-		URL             *address
+		a                 *amiibo
+		boxImage          *image
+		compatabilityURLs []*address
+		complete          bool
+		currency          = currency.USD.String()
+		description       string
+		detailsPath       string
+		detailsURL        *address
+		figureURL         *address
+		franchise         string
+		game              string
+		hex               string
+		ID                string
+		image             *image
+		isRelatedTo       string
+		isReleased        bool
+		language          = language.AmericanEnglish
+		lastModified      int64
+		name              string
+		overview          string
+		pageURL           *address
+		path              string
+		presentedBy       string
+		price             string
+		releaseDateMask   string
+		series            string
+		slug              string
+		tagID             string
+		timestamp         time.Time
+		typeAlias         string
+		typeOf            string
+		unix              int64
+		UPC               string
+		URI               string
+		URL               *address
 	)
 	complete = (c != nil) && (l != nil) && (i != nil)
 	if c != nil {
@@ -225,40 +228,42 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		}
 	}
 	URI = normalizeURI(name)
+	compatabilityURLs, _ = getAmiiboCompatabilityURLs(URL.URL)
 	a = &amiibo{
-		BoxImage:        boxImage,
-		Complete:        complete,
-		Currency:        currency,
-		Description:     description,
-		DetailsPath:     detailsPath,
-		DetailsURL:      detailsURL,
-		FigureURL:       figureURL,
-		Franchise:       franchise,
-		GameCode:        game,
-		HexCode:         hex,
-		ID:              ID,
-		Image:           image,
-		IsRelatedTo:     isRelatedTo,
-		IsReleased:      isReleased,
-		Language:        language,
-		LastModified:    lastModified,
-		Name:            name,
-		Overview:        overview,
-		Path:            path,
-		PageURL:         pageURL,
-		PresentedBy:     presentedBy,
-		Price:           price,
-		ReleaseDateMask: releaseDateMask,
-		Series:          series,
-		Slug:            slug,
-		TagID:           tagID,
-		Timestamp:       timestamp,
-		Type:            typeOf,
-		TypeAlias:       typeAlias,
-		Unix:            unix,
-		UPC:             UPC,
-		URI:             URI,
-		URL:             URL}
+		BoxImage:          boxImage,
+		CompatabilityURLs: compatabilityURLs,
+		Complete:          complete,
+		Currency:          currency,
+		Description:       description,
+		DetailsPath:       detailsPath,
+		DetailsURL:        detailsURL,
+		FigureURL:         figureURL,
+		Franchise:         franchise,
+		GameCode:          game,
+		HexCode:           hex,
+		ID:                ID,
+		Image:             image,
+		IsRelatedTo:       isRelatedTo,
+		IsReleased:        isReleased,
+		Language:          language,
+		LastModified:      lastModified,
+		Name:              name,
+		Overview:          overview,
+		Path:              path,
+		PageURL:           pageURL,
+		PresentedBy:       presentedBy,
+		Price:             price,
+		ReleaseDateMask:   releaseDateMask,
+		Series:            series,
+		Slug:              slug,
+		TagID:             tagID,
+		Timestamp:         timestamp,
+		Type:              typeOf,
+		TypeAlias:         typeAlias,
+		Unix:              unix,
+		UPC:               UPC,
+		URI:               URI,
+		URL:               URL}
 	return a, nil
 }
 

@@ -82,7 +82,7 @@ var (
 )
 
 var (
-	replacerURI = strings.NewReplacer([]string{"&", "and", "'", ""}...)
+	replacerURI = strings.NewReplacer([]string{"&", "and", "'", "", "é", "e"}...)
 )
 
 var (

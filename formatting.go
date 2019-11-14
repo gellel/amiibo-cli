@@ -5,12 +5,10 @@ import (
 	"reflect"
 	"strings"
 	"text/tabwriter"
-
-	"golang.org/x/text/transform"
 )
 
 func normalizeURI(s string) string {
-	s, _, _ = transform.String(transformer, s)
+	//s, _, _ = transform.String(transformer, s)
 	s = replacerURI.Replace(s)
 	s = regexpUnwantedURI.ReplaceAllString(s, "-")
 	s = regexpHyphens.ReplaceAllString(s, "")
