@@ -10,25 +10,28 @@ import (
 )
 
 type game struct {
-	Complete        bool         `json:"complete"`
-	Description     string       `json:"description"`
-	GamePath        string       `json:"game_path"`
-	GameURL         *address     `json:"game_url"`
-	ID              string       `json:"id"`
-	Image           *image       `json:"image"`
-	IsReleased      bool         `json:"is_released"`
-	Language        language.Tag `json:"language"`
-	LastModified    int64        `json:"last_modified"`
-	Path            string       `json:"path"`
-	Name            string       `json:"name"`
-	ReleaseDateMask string       `json:"release_date_mask"`
-	Timestamp       time.Time    `json:"timestamp"`
-	Title           string       `json:"title"`
-	Type            string       `json:"type"`
-	Unix            int64        `json:"unix"`
-	URI             string       `json:"uri"`
-	URL             *address     `json:"url"`
+	CompatabilityURLs []*address   `json:"compatability_urls"`
+	Complete          bool         `json:"complete"`
+	Description       string       `json:"description"`
+	GamePath          string       `json:"game_path"`
+	GameURL           *address     `json:"game_url"`
+	ID                string       `json:"id"`
+	Image             *image       `json:"image"`
+	IsReleased        bool         `json:"is_released"`
+	Language          language.Tag `json:"language"`
+	LastModified      int64        `json:"last_modified"`
+	Path              string       `json:"path"`
+	Name              string       `json:"name"`
+	ReleaseDateMask   string       `json:"release_date_mask"`
+	Timestamp         time.Time    `json:"timestamp"`
+	Title             string       `json:"title"`
+	Type              string       `json:"type"`
+	Unix              int64        `json:"unix"`
+	URI               string       `json:"uri"`
+	URL               *address     `json:"url"`
 }
+
+func getGameCompatability(rawurl string) {}
 
 func marshalGame(g *game) (*[]byte, error) {
 	return marshal(g)
