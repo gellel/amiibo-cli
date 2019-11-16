@@ -38,9 +38,16 @@ func newGameAmiibo(s *goquery.Selection) (*gameAmiibo, error) {
 		isReleased bool
 		name       = stripAmiiboName(s.Find(".amiibo-name").Text())
 		series     = strings.TrimSpace(s.Find(".isRelatedTo").Text())
+		substring  string
 		timestamp  time.Time
 		URL        *address
 	)
+	substring = s.Find(".releaseDate").Text()
+	substring = strings.Replace(substring, "available", "", 1)
+	substring = strings.TrimSpace(substring)
+	timestamp, _ = time.Parse("01/02/2006", substring)
+	timestamp = timestamp.UTC()
+	isReleased = timestamp.Unix() < time.Now().UTC().Unix()
 	game = gameAmiibo{
 		Image:      image,
 		IsReleased: isReleased,
