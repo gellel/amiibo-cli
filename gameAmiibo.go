@@ -30,7 +30,8 @@ func newGameAmiibo(s *goquery.Selection) (*gameAmiibo, error) {
 		return nil, fmt.Errorf("*s is empty")
 	}
 	const (
-		template = "%s%s"
+		template string = "%s%s"
+		timeLayout string = "01/02/2006"
 	)
 	var (
 		game       gameAmiibo
@@ -45,7 +46,7 @@ func newGameAmiibo(s *goquery.Selection) (*gameAmiibo, error) {
 	substring = s.Find(".releaseDate").Text()
 	substring = strings.Replace(substring, "available", "", 1)
 	substring = strings.TrimSpace(substring)
-	timestamp, _ = time.Parse("01/02/2006", substring)
+	timestamp, _ = time.Parse(timeLayout, substring)
 	timestamp = timestamp.UTC()
 	isReleased = timestamp.Unix() < time.Now().UTC().Unix()
 	game = gameAmiibo{

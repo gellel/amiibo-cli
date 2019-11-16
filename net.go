@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -55,6 +56,10 @@ func netGoQuery(rawurl string) (*goquery.Document, error) {
 		req *http.Request
 		res *http.Response
 	)
+	ok = (strings.HasPrefix(rawurl, "https://") || strings.HasPrefix(rawurl, "http://"))
+	if !ok {
+		return nil, fmt.Errorf("%s is not a valid URL", rawurl)
+	}
 	req, err = http.NewRequest(http.MethodGet, rawurl, nil)
 	ok = (err == nil)
 	if !ok {

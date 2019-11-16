@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -35,12 +36,12 @@ type game struct {
 
 func getGameCompatability(rawurl string) ([]*gameAmiibo, error) {
 	const (
-		CSS string = "ul.figures:nth-child(1) li"
+		CSS string = "ul.figures li"
 	)
 	var (
 		doc   *goquery.Document
 		err   error
-		games []*gameAmiibo
+		games = []*gameAmiibo{}
 		ok    bool
 		s     *goquery.Selection
 	)
@@ -50,10 +51,6 @@ func getGameCompatability(rawurl string) ([]*gameAmiibo, error) {
 		return nil, err
 	}
 	s = doc.Find(CSS)
-	ok = (s.Length() != 0)
-	if !ok {
-		return nil, fmt.Errorf("*s is empty")
-	}
 	s.Each(func(i int, s *goquery.Selection) {
 		var (
 			g, err = newGameAmiibo(s)
@@ -124,10 +121,13 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 		lastModified = i.LastModified
 		path = i.Path
 		title = i.Title
-		URL, _ = newAddress(fmt.Sprintf(template, nintendoURL, i.URL))
+		URL, _ = newAddress(fmt.Sprintf(template, amiiboURL+"/", strings.TrimPrefix(i.URL+"/", "/content/noa/en_US/")))
 	}
 	URI = normalizeURI(name)
-	compatability, _ = getGameCompatability(URL.URL)
+	compatability, err := getGameCompatability(URL.URL)
+	if err != nil {
+		panic(err)
+	}
 	g = &game{
 		Compatability:   compatability,
 		Complete:        complete,

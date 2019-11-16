@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 var (
 	_ hashMap = &gameMap{}
@@ -64,9 +67,10 @@ func newGameMap(m *mixGameMap) (*gameMap, error) {
 	var (
 		err error
 		g   *game
+		mu  sync.Mutex
 		ok  bool
-
-		x = gameMap{}
+		wg  sync.WaitGroup
+		x   = gameMap{}
 	)
 	ok = (m != nil)
 	if !ok {
@@ -77,15 +81,22 @@ func newGameMap(m *mixGameMap) (*gameMap, error) {
 		return nil, fmt.Errorf("*m is empty")
 	}
 	for _, v := range *m {
-		g, err = newGame(v.compatabilityGame, v.compatabilityItem)
-		if err != nil {
-			continue
-		}
-		if g == nil {
-			continue
-		}
-		x[g.URI] = g
+		wg.Add(1)
+		go func(v *mixGame) {
+			defer wg.Done()
+			g, err = newGame(v.compatabilityGame, v.compatabilityItem)
+			if err != nil {
+				return
+			}
+			if g == nil {
+				return
+			}
+			mu.Lock()
+			x[g.URI] = g
+			mu.Unlock()
+		}(v)
 	}
+	wg.Wait()
 	return &x, err
 }
 

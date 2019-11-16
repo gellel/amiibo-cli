@@ -50,7 +50,7 @@ const (
 )
 
 const (
-	nintendoURL string = "https://" + nintendoTLD
+	nintendoURL string = "https://" + "www" + "." + nintendoTLD
 )
 
 const (
