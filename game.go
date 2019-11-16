@@ -6,32 +6,66 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
+
 	"golang.org/x/text/language"
 )
 
 type game struct {
-	CompatabilityURLs []*address   `json:"compatability_urls"`
-	Complete          bool         `json:"complete"`
-	Description       string       `json:"description"`
-	GamePath          string       `json:"game_path"`
-	GameURL           *address     `json:"game_url"`
-	ID                string       `json:"id"`
-	Image             *image       `json:"image"`
-	IsReleased        bool         `json:"is_released"`
-	Language          language.Tag `json:"language"`
-	LastModified      int64        `json:"last_modified"`
-	Path              string       `json:"path"`
-	Name              string       `json:"name"`
-	ReleaseDateMask   string       `json:"release_date_mask"`
-	Timestamp         time.Time    `json:"timestamp"`
-	Title             string       `json:"title"`
-	Type              string       `json:"type"`
-	Unix              int64        `json:"unix"`
-	URI               string       `json:"uri"`
-	URL               *address     `json:"url"`
+	Compatability   []*gameAmiibo `json:"compatability"`
+	Complete        bool          `json:"complete"`
+	Description     string        `json:"description"`
+	GamePath        string        `json:"game_path"`
+	GameURL         *address      `json:"game_url"`
+	ID              string        `json:"id"`
+	Image           *image        `json:"image"`
+	IsReleased      bool          `json:"is_released"`
+	Language        language.Tag  `json:"language"`
+	LastModified    int64         `json:"last_modified"`
+	Path            string        `json:"path"`
+	Name            string        `json:"name"`
+	ReleaseDateMask string        `json:"release_date_mask"`
+	Timestamp       time.Time     `json:"timestamp"`
+	Title           string        `json:"title"`
+	Type            string        `json:"type"`
+	Unix            int64         `json:"unix"`
+	URI             string        `json:"uri"`
+	URL             *address      `json:"url"`
 }
 
-func getGameCompatability(rawurl string) {}
+func getGameCompatability(rawurl string) ([]*gameAmiibo, error) {
+	const (
+		CSS string = "ul.figures:nth-child(1) li"
+	)
+	var (
+		doc   *goquery.Document
+		err   error
+		games []*gameAmiibo
+		ok    bool
+		s     *goquery.Selection
+	)
+	doc, err = netGoQuery(rawurl)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	s = doc.Find(CSS)
+	ok = (s.Length() != 0)
+	if !ok {
+		return nil, fmt.Errorf("*s is empty")
+	}
+	s.Each(func(i int, s *goquery.Selection) {
+		var (
+			g, err = newGameAmiibo(s)
+		)
+		if err != nil {
+			return
+		}
+		games = append(games, g)
+
+	})
+	return games, nil
+}
 
 func marshalGame(g *game) (*[]byte, error) {
 	return marshal(g)
@@ -49,6 +83,7 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 		template string = "%s%s"
 	)
 	var (
+		compatability   []*gameAmiibo
 		complete        bool
 		description     string
 		g               *game
@@ -92,7 +127,9 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 		URL, _ = newAddress(fmt.Sprintf(template, nintendoURL, i.URL))
 	}
 	URI = normalizeURI(name)
+	compatability, _ = getGameCompatability(URL.URL)
 	g = &game{
+		Compatability:   compatability,
 		Complete:        complete,
 		Description:     description,
 		GamePath:        gamePath,

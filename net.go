@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func net(rawurl string) (*xhr, error) {
@@ -43,6 +45,36 @@ func net(rawurl string) (*xhr, error) {
 	}
 	x.Body = b
 	return x, err
+}
+
+func netGoQuery(rawurl string) (*goquery.Document, error) {
+	var (
+		doc *goquery.Document
+		err error
+		ok  bool
+		req *http.Request
+		res *http.Response
+	)
+	req, err = http.NewRequest(http.MethodGet, rawurl, nil)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	res, err = (&http.Client{}).Do(req)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	ok = (res.StatusCode == http.StatusOK)
+	if !ok {
+		return nil, fmt.Errorf(res.Status)
+	}
+	doc, err = goquery.NewDocumentFromResponse(res)
+	ok = (err == nil)
+	if !ok {
+		return nil, err
+	}
+	return doc, nil
 }
 
 func netRead(r *http.Response) (*[]byte, error) {

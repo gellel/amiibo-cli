@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html"
-	"net/http"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -72,25 +71,9 @@ func getAmiiboCompatabilityURLs(rawurl string) ([]*address, error) {
 		doc               *goquery.Document
 		err               error
 		ok                bool
-		req               *http.Request
-		res               *http.Response
 		s                 *goquery.Selection
 	)
-	req, err = http.NewRequest(http.MethodGet, rawurl, nil)
-	ok = (err == nil)
-	if !ok {
-		return nil, err
-	}
-	res, err = (&http.Client{}).Do(req)
-	ok = (err == nil)
-	if !ok {
-		return nil, err
-	}
-	ok = (res.StatusCode == http.StatusOK)
-	if !ok {
-		return nil, fmt.Errorf(res.Status)
-	}
-	doc, err = goquery.NewDocumentFromResponse(res)
+	doc, err = netGoQuery(rawurl)
 	ok = (err == nil)
 	if !ok {
 		return nil, err
