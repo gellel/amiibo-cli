@@ -121,13 +121,10 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 		lastModified = i.LastModified
 		path = i.Path
 		title = i.Title
-		URL, _ = newAddress(fmt.Sprintf(template, amiiboURL+"/", strings.TrimPrefix(i.URL+"/", "/content/noa/en_US/")))
+		URL, _ = newAddress(fmt.Sprintf(template, (amiiboURL + "/"), strings.TrimPrefix((i.URL+"/"), "/content/noa/en_US/")))
 	}
 	URI = normalizeURI(name)
-	compatability, err := getGameCompatability(URL.URL)
-	if err != nil {
-		panic(err)
-	}
+	compatability, _ = getGameCompatability(URL.URL)
 	g = &game{
 		Compatability:   compatability,
 		Complete:        complete,

@@ -11,13 +11,15 @@ var (
 )
 
 type address struct {
-	Fragment string `json:"fragment"`
-	Host     string `json:"host"`
-	Hostname string `json:"hostname"`
-	Path     string `json:"path"`
-	Scheme   string `json:"scheme"`
-	TLD      string `json:"tld"`
-	URL      string `json:"url"`
+	Domain    string `json:"domain"`
+	Fragment  string `json:"fragment"`
+	Host      string `json:"host"`
+	Hostname  string `json:"hostname"`
+	Path      string `json:"path"`
+	Scheme    string `json:"scheme"`
+	Subdomain string `json:"subdomain"`
+	TLD       string `json:"tld"`
+	URL       string `json:"url"`
 }
 
 func (a *address) Value() interface{} {
@@ -40,15 +42,75 @@ func newAddress(rawurl string) (*address, error) {
 	if !ok {
 		return nil, err
 	}
+	var (
+		hostname = URL.Hostname()
+	)
+	var (
+		domain    = parseAddressDomain(hostname)
+		subdomain = parseAddressSubdomain(hostname)
+		TLD       = parseAddressTLD(subdomain, domain, hostname)
+	)
 	a = &address{
-		Fragment: URL.Fragment,
-		Host:     URL.Host,
-		Hostname: URL.Hostname(),
-		Path:     URL.Path,
-		Scheme:   URL.Scheme,
-		TLD:      URL.Host[:strings.IndexByte(URL.Host, '.')],
-		URL:      rawurl}
+		Domain:    domain,
+		Fragment:  URL.Fragment,
+		Host:      URL.Host,
+		Hostname:  hostname,
+		Path:      URL.Path,
+		Scheme:    URL.Scheme,
+		Subdomain: subdomain,
+		TLD:       TLD,
+		URL:       rawurl}
 	return a, err
+}
+
+func parseAddressDomain(hostname string) string {
+	const (
+		sep string = "."
+	)
+	var (
+		n          int
+		ok         bool
+		substrings = strings.Split(hostname, sep)
+	)
+	n = len(substrings)
+	ok = (n < 4)
+	if ok {
+		return substrings[n-2]
+	}
+	return substrings[n-3]
+}
+
+func parseAddressSubdomain(hostname string) string {
+	const (
+		sep string = "."
+	)
+	var (
+		n          int
+		ok         bool
+		subdomain  string
+		substrings = strings.Split(hostname, sep)
+	)
+	n = len(substrings)
+	ok = (n < 4)
+	if ok {
+		n = (n - 3)
+	} else {
+		n = (n - 4)
+	}
+	subdomain = substrings[n]
+	return subdomain
+}
+
+func parseAddressTLD(subdomain, domain, hostname string) string {
+	const (
+		sep string = "."
+	)
+	var (
+		TLD string
+	)
+	TLD = strings.Replace(hostname, (subdomain + sep), "", 1)
+	TLD = strings.Replace(TLD, (domain + sep), "", 1)
+	return TLD
 }
 
 func tableAddress(w *tabwriter.Writer, a *address) error {
