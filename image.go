@@ -7,17 +7,18 @@ import (
 
 type image struct {
 	Address   *address `json:"address"`
+	Dir       string   `json:"dir"`
 	Extension string   `json:"extension"`
 	Name      string   `json:"name"`
 }
 
 func newImage(rawurl string) (*image, error) {
+	const (
+		sep string = "."
+	)
 	var (
 		address *address
 		err     error
-		ext     string
-		i       *image
-		name    string
 		ok      bool
 	)
 	address, err = newAddress(rawurl)
@@ -25,13 +26,16 @@ func newImage(rawurl string) (*image, error) {
 	if !ok {
 		return nil, err
 	}
-	ext = filepath.Ext(rawurl)
-	ext = strings.TrimPrefix(ext, ".")
-	name = filepath.Dir(rawurl)
-	name = filepath.Base(name)
+	var (
+		dir  = filepath.Dir(rawurl)
+		ext  = filepath.Ext(rawurl)
+		i    *image
+		name = filepath.Base(rawurl)
+	)
 	i = &image{
 		Address:   address,
-		Extension: ext,
-		Name:      name}
+		Dir:       dir,
+		Extension: strings.TrimPrefix(ext, sep),
+		Name:      strings.TrimSuffix(name, ext)}
 	return i, err
 }

@@ -72,9 +72,9 @@ func parseGameAmiiboImage(s *goquery.Selection) (*image, error) {
 	if !ok {
 		return nil, fmt.Errorf("*s is empty")
 	}
-	rawurl, ok = s.Attr("href")
+	rawurl, ok = s.Attr("src")
 	if !ok {
-		return nil, fmt.Errorf("*s has no href")
+		return nil, fmt.Errorf("*s has no src")
 	}
 	return newImage(fmt.Sprintf("%s%s", nintendoURL, rawurl))
 }
