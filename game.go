@@ -121,7 +121,7 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 		lastModified = i.LastModified
 		path = i.Path
 		title = i.Title
-		URL, _ = newAddress(fmt.Sprintf(template, (amiiboURL + "/"), strings.TrimPrefix((i.URL+"/"), "/content/noa/en_US/")))
+		URL, _ = parseGameURL(i.URL)
 	}
 	URI = normalizeURI(name)
 	compatability, _ = getGameCompatability(URL.URL)
@@ -146,6 +146,15 @@ func newGame(c *compatabilityGame, i *compatabilityItem) (*game, error) {
 		URI:             URI,
 		URL:             URL}
 	return g, nil
+}
+
+func parseGameURL(rawurl string) (*address, error) {
+	const (
+		template string = "%s%s"
+	)
+	rawurl = strings.TrimPrefix((rawurl + "/"), "/content/noa/en_US/")
+	rawurl = fmt.Sprintf(template, (amiiboURL + "/"), rawurl)
+	return newAddress(rawurl)
 }
 
 func readGame(fullpath string) (*game, error) {
