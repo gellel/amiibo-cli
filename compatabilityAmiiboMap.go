@@ -20,7 +20,7 @@ func newCompatabilityAmiiboMap(c []*compatabilityAmiibo) (*compatabilityAmiiboMa
 	}
 	for _, v := range c {
 		var (
-			s =  normalizeAmiiboMapKey(v.URL)
+			s = normalizeAmiiboMapKey(v.URL)
 		)
 		m[s] = v
 	}

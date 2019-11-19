@@ -59,7 +59,7 @@ func parseAmiiboGameImage(s *goquery.Selection) (*image, error) {
 
 func parseAmiiboGameName(s *goquery.Selection) (string, error) {
 	const (
-		CSS string = ".amiibo-name"
+		CSS string = "a[title]"
 	)
 	var (
 		err  error
@@ -71,10 +71,9 @@ func parseAmiiboGameName(s *goquery.Selection) (string, error) {
 	if !ok {
 		return name, fmt.Errorf("*s is empty")
 	}
-	name = (s.Text())
-	ok = (len(name) != 0)
+	name, ok = s.Attr("title")
 	if !ok {
-		return name, fmt.Errorf("*s has no text")
+		return name, fmt.Errorf("*s has no title")
 	}
 	return stripAmiiboName(name), err
 }

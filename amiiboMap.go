@@ -93,6 +93,9 @@ func newAmiiboMap(m *mixAmiiboMap) (*amiiboMap, error) {
 				return
 			}
 			mu.Lock()
+			if _, ok := x[a.URI]; ok {
+				fmt.Println("x has a collision!", a.URI) // this needs to be fixed!
+			}
 			x[a.URI] = a
 			mu.Unlock()
 		}(v)
