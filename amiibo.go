@@ -19,94 +19,74 @@ var (
 )
 
 type amiibo struct {
-	BoxImage          *image       `json:"box_image"`
-	CompatabilityURLs []*address   `json:"compatability_urls"`
-	Complete          bool         `json:"complete"`
-	Currency          string       `json:"currency"`
-	Description       string       `json:"description"`
-	DetailsPath       string       `json:"details_path"`
-	DetailsURL        *address     `json:"details_url"`
-	FigureURL         *address     `json:"figure_url"`
-	Franchise         string       `json:"franchise"`
-	GameCode          string       `json:"game_code"`
-	HexCode           string       `json:"hex_code"`
-	ID                string       `json:"id"`
-	Image             *image       `json:"image"`
-	IsRelatedTo       string       `json:"is_related_to"`
-	IsReleased        bool         `json:"is_released"`
-	Language          language.Tag `json:"language"`
-	LastModified      int64        `json:"last_modified"`
-	Name              string       `json:"name"`
-	Overview          string       `json:"overview"`
-	PageURL           *address     `json:"page"`
-	Path              string       `json:"path"`
-	PresentedBy       string       `json:"presented_by"`
-	Price             string       `json:"price"`
-	ReleaseDateMask   string       `json:"release_date_mask"`
-	Series            string       `json:"series"`
-	Slug              string       `json:"slug"`
-	TagID             string       `json:"tag_id"`
-	Timestamp         time.Time    `json:"timestamp"`
-	Type              string       `json:"type"`
-	TypeAlias         string       `json:"type_alias"`
-	Unix              int64        `json:"unix"`
-	UPC               string       `json:"upc"`
-	URI               string       `json:"uri"`
-	URL               *address     `json:"url"`
+	BoxImage        *image        `json:"box_image"`
+	Compatability   []*amiiboGame `json:"compatability"`
+	Complete        bool          `json:"complete"`
+	Currency        string        `json:"currency"`
+	Description     string        `json:"description"`
+	DetailsPath     string        `json:"details_path"`
+	DetailsURL      *address      `json:"details_url"`
+	FigureURL       *address      `json:"figure_url"`
+	Franchise       string        `json:"franchise"`
+	GameCode        string        `json:"game_code"`
+	HexCode         string        `json:"hex_code"`
+	ID              string        `json:"id"`
+	Image           *image        `json:"image"`
+	IsRelatedTo     string        `json:"is_related_to"`
+	IsReleased      bool          `json:"is_released"`
+	Language        language.Tag  `json:"language"`
+	LastModified    int64         `json:"last_modified"`
+	Name            string        `json:"name"`
+	Overview        string        `json:"overview"`
+	PageURL         *address      `json:"page"`
+	Path            string        `json:"path"`
+	PresentedBy     string        `json:"presented_by"`
+	Price           string        `json:"price"`
+	ReleaseDateMask string        `json:"release_date_mask"`
+	Series          string        `json:"series"`
+	Slug            string        `json:"slug"`
+	TagID           string        `json:"tag_id"`
+	Timestamp       time.Time     `json:"timestamp"`
+	Type            string        `json:"type"`
+	TypeAlias       string        `json:"type_alias"`
+	Unix            int64         `json:"unix"`
+	UPC             string        `json:"upc"`
+	URI             string        `json:"uri"`
+	URL             *address      `json:"url"`
 }
 
 func (a *amiibo) Value() interface{} {
 	return *a
 }
 
-func getAmiiboCompatabilityURLs(rawurl string) ([]*address, error) {
+func getAmiiboCompatability(rawurl string) ([]*amiiboGame, error) {
 	const (
-		attrHref  string = "href"
-		childCSS  string = "a:nth-child(1)"
-		parentCSS string = "#game-set li"
-		template  string = "%s%s"
+		CSS string = "ul#game-set li"
 	)
 	var (
-		compatabilityURLs []*address
-		doc               *goquery.Document
-		err               error
-		ok                bool
-		s                 *goquery.Selection
+		doc    *goquery.Document
+		err    error
+		amiibo = []*amiiboGame{}
+		ok     bool
+		s      *goquery.Selection
 	)
 	doc, err = netGoQuery(rawurl)
 	ok = (err == nil)
 	if !ok {
 		return nil, err
 	}
-	s = doc.Find(parentCSS)
-	ok = (s.Length() != 0)
-	if !ok {
-		return nil, err
-	}
+	s = doc.Find(CSS)
 	s.Each(func(i int, s *goquery.Selection) {
 		var (
-			address *address
-			err     error
-			href    string
-			ok      bool
+			a, err = newAmiiboGame(s)
 		)
-		s = s.Find(childCSS).First()
-		ok = (s.Length() != 0)
-		if !ok {
+		if err != nil {
 			return
 		}
-		href, ok = s.Attr(attrHref)
-		if !ok {
-			return
-		}
-		address, err = newAddress(fmt.Sprintf(template, nintendoURL, href))
-		ok = (err == nil)
-		if !ok {
-			return
-		}
-		compatabilityURLs = append(compatabilityURLs, address)
+		amiibo = append(amiibo, a)
+
 	})
-	return compatabilityURLs, err
+	return amiibo, err
 }
 
 func marshalAmiibo(a *amiibo) (*[]byte, error) {
@@ -125,41 +105,41 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		template string = "%s%s"
 	)
 	var (
-		a                 *amiibo
-		boxImage          *image
-		compatabilityURLs []*address
-		complete          bool
-		currency          = currency.USD.String()
-		description       string
-		detailsPath       string
-		detailsURL        *address
-		figureURL         *address
-		franchise         string
-		game              string
-		hex               string
-		ID                string
-		image             *image
-		isRelatedTo       string
-		isReleased        bool
-		language          = language.AmericanEnglish
-		lastModified      int64
-		name              string
-		overview          string
-		pageURL           *address
-		path              string
-		presentedBy       string
-		price             string
-		releaseDateMask   string
-		series            string
-		slug              string
-		tagID             string
-		timestamp         time.Time
-		typeAlias         string
-		typeOf            string
-		unix              int64
-		UPC               string
-		URI               string
-		URL               *address
+		a               *amiibo
+		boxImage        *image
+		compatability   []*amiiboGame
+		complete        bool
+		currency        = currency.USD.String()
+		description     string
+		detailsPath     string
+		detailsURL      *address
+		figureURL       *address
+		franchise       string
+		game            string
+		hex             string
+		ID              string
+		image           *image
+		isRelatedTo     string
+		isReleased      bool
+		language        = language.AmericanEnglish
+		lastModified    int64
+		name            string
+		overview        string
+		pageURL         *address
+		path            string
+		presentedBy     string
+		price           string
+		releaseDateMask string
+		series          string
+		slug            string
+		tagID           string
+		timestamp       time.Time
+		typeAlias       string
+		typeOf          string
+		unix            int64
+		UPC             string
+		URI             string
+		URL             *address
 	)
 	complete = (c != nil) && (l != nil) && (i != nil)
 	if c != nil {
@@ -207,47 +187,56 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		}
 		ok = (URL != nil)
 		if !ok {
-			URL, _ = newAddress(fmt.Sprintf(template, nintendoURL, i.URL))
+			URL, _ = parseAmiiboURL(i.URL)
 		}
 	}
 	URI = normalizeURI(name)
-	compatabilityURLs, _ = getAmiiboCompatabilityURLs(URL.URL)
+	compatability, _ = getAmiiboCompatability(URL.URL)
 	a = &amiibo{
-		BoxImage:          boxImage,
-		CompatabilityURLs: compatabilityURLs,
-		Complete:          complete,
-		Currency:          currency,
-		Description:       description,
-		DetailsPath:       detailsPath,
-		DetailsURL:        detailsURL,
-		FigureURL:         figureURL,
-		Franchise:         franchise,
-		GameCode:          game,
-		HexCode:           hex,
-		ID:                ID,
-		Image:             image,
-		IsRelatedTo:       isRelatedTo,
-		IsReleased:        isReleased,
-		Language:          language,
-		LastModified:      lastModified,
-		Name:              name,
-		Overview:          overview,
-		Path:              path,
-		PageURL:           pageURL,
-		PresentedBy:       presentedBy,
-		Price:             price,
-		ReleaseDateMask:   releaseDateMask,
-		Series:            series,
-		Slug:              slug,
-		TagID:             tagID,
-		Timestamp:         timestamp,
-		Type:              typeOf,
-		TypeAlias:         typeAlias,
-		Unix:              unix,
-		UPC:               UPC,
-		URI:               URI,
-		URL:               URL}
+		BoxImage:        boxImage,
+		Compatability:   compatability,
+		Complete:        complete,
+		Currency:        currency,
+		Description:     description,
+		DetailsPath:     detailsPath,
+		DetailsURL:      detailsURL,
+		FigureURL:       figureURL,
+		Franchise:       franchise,
+		GameCode:        game,
+		HexCode:         hex,
+		ID:              ID,
+		Image:           image,
+		IsRelatedTo:     isRelatedTo,
+		IsReleased:      isReleased,
+		Language:        language,
+		LastModified:    lastModified,
+		Name:            name,
+		Overview:        overview,
+		Path:            path,
+		PageURL:         pageURL,
+		PresentedBy:     presentedBy,
+		Price:           price,
+		ReleaseDateMask: releaseDateMask,
+		Series:          series,
+		Slug:            slug,
+		TagID:           tagID,
+		Timestamp:       timestamp,
+		Type:            typeOf,
+		TypeAlias:       typeAlias,
+		Unix:            unix,
+		UPC:             UPC,
+		URI:             URI,
+		URL:             URL}
 	return a, nil
+}
+
+func parseAmiiboURL(rawurl string) (*address, error) {
+	const (
+		template string = "%s%s"
+	)
+	rawurl = strings.TrimPrefix((rawurl + "/"), "/content/noa/en_US/")
+	rawurl = fmt.Sprintf(template, (amiiboURL + "/"), rawurl)
+	return newAddress(rawurl)
 }
 
 func readAmiibo(fullpath string) (*amiibo, error) {

@@ -116,6 +116,8 @@ func parseGameAmiiboReleaseDateMask(s *goquery.Selection) (string, error) {
 		return substring, fmt.Errorf("*s is empty")
 	}
 	substring = strings.ToLower(substring)
+	substring = strings.ReplaceAll(substring, " ", "")
+	substring = strings.ReplaceAll(substring, "\n", "")
 	substring = strings.Replace(substring, "available", "", 1)
 	return substring, err
 }
