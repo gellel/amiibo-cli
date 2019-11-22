@@ -253,6 +253,41 @@ func readAmiibo(fullpath string) (*amiibo, error) {
 	return unmarshalAmiibo(b)
 }
 
+func reduceAmiiboByCompleteness(amiibo ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+	)
+	return amiibo, err
+}
+
+func reduceAmiiboByPresenter(amiibo ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+	)
+	return amiibo, err
+}
+
+func reduceAmiiboByRelationship(amiibo ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+	)
+	return amiibo, err
+}
+
+func reduceAmiiboBySeries(amiibo ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+	)
+	return amiibo, err
+}
+
+func reduceAmiiboByType(amiibo ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+	)
+	return amiibo, err
+}
+
 func stripAmiiboHTML(s string) string {
 	s = regexpSpaces.ReplaceAllString(regexpHTML.ReplaceAllString(s, " "), " ")
 	s = html.UnescapeString(strings.TrimSpace(s))
