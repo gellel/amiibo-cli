@@ -44,6 +44,7 @@ type amiibo struct {
 	Price           string        `json:"price"`
 	ReleaseDateMask string        `json:"release_date_mask"`
 	Series          string        `json:"series"`
+	SeriesID        string        `json:"series_id"`
 	Slug            string        `json:"slug"`
 	TagID           string        `json:"tag_id"`
 	Timestamp       time.Time     `json:"timestamp"`
@@ -131,6 +132,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		price           string
 		releaseDateMask string
 		series          string
+		seriesID        string
 		slug            string
 		tagID           string
 		timestamp       time.Time
@@ -171,6 +173,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		price = l.Price
 		releaseDateMask = l.ReleaseDateMask
 		series = l.Series
+		seriesID = stripAmiiboName(series)
 		slug = l.Slug
 		timestamp = time.Unix(l.UnixTimestamp, 0).UTC()
 		typeAlias = strings.ToLower(l.Type)
@@ -218,6 +221,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		Price:           price,
 		ReleaseDateMask: releaseDateMask,
 		Series:          series,
+		SeriesID:        seriesID,
 		Slug:            slug,
 		TagID:           tagID,
 		Timestamp:       timestamp,
@@ -253,39 +257,39 @@ func readAmiibo(fullpath string) (*amiibo, error) {
 	return unmarshalAmiibo(b)
 }
 
-func reduceAmiiboByCompleteness(amiibo ...*amiibo) ([]*amiibo, error) {
+func reduceAmiiboByCompleteness(a []*amiibo, complete bool) ([]*amiibo, error) {
 	var (
 		err error
 	)
-	return amiibo, err
+	return a, err
 }
 
-func reduceAmiiboByPresenter(amiibo ...*amiibo) ([]*amiibo, error) {
+func reduceAmiiboByPresenter(a []*amiibo, presenters ...string) ([]*amiibo, error) {
 	var (
 		err error
 	)
-	return amiibo, err
+	return a, err
 }
 
-func reduceAmiiboByRelationship(amiibo ...*amiibo) ([]*amiibo, error) {
+func reduceAmiiboByRelationship(a []*amiibo, relationship ...string) ([]*amiibo, error) {
 	var (
 		err error
 	)
-	return amiibo, err
+	return a, err
 }
 
-func reduceAmiiboBySeries(amiibo ...*amiibo) ([]*amiibo, error) {
+func reduceAmiiboBySeries(a []*amiibo, series ...string) ([]*amiibo, error) {
 	var (
 		err error
 	)
-	return amiibo, err
+	return a, err
 }
 
-func reduceAmiiboByType(amiibo ...*amiibo) ([]*amiibo, error) {
+func reduceAmiiboByType(a []*amiibo, types ...string) ([]*amiibo, error) {
 	var (
 		err error
 	)
-	return amiibo, err
+	return a, err
 }
 
 func stripAmiiboHTML(s string) string {
