@@ -28,6 +28,7 @@ type amiibo struct {
 	DetailsURL      *address      `json:"details_url"`
 	FigureURL       *address      `json:"figure_url"`
 	Franchise       string        `json:"franchise"`
+	FranchiseID     string        `json:"franchise_id"`
 	GameCode        string        `json:"game_code"`
 	HexCode         string        `json:"hex_code"`
 	ID              string        `json:"id"`
@@ -116,6 +117,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		detailsURL      *address
 		figureURL       *address
 		franchise       string
+		franchiseID     string
 		game            string
 		hex             string
 		ID              string
@@ -160,6 +162,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		detailsURL, _ = newAddress(fmt.Sprintf(template, nintendoURL, l.DetailsURL))
 		figureURL, _ = newAddress(fmt.Sprintf(template, nintendoURL, l.FigureURL))
 		franchise = l.Franchise
+		franchiseID = normalizeURI(stripAmiiboName(franchise))
 		game = l.GameCode
 		hex = l.HexCode
 		isReleased = l.IsReleased
@@ -173,7 +176,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		price = l.Price
 		releaseDateMask = l.ReleaseDateMask
 		series = l.Series
-		seriesID = stripAmiiboName(series)
+		seriesID = normalizeURI(stripAmiiboName(series))
 		slug = l.Slug
 		timestamp = time.Unix(l.UnixTimestamp, 0).UTC()
 		typeAlias = strings.ToLower(l.Type)
@@ -205,6 +208,7 @@ func newAmiibo(c *compatabilityAmiibo, l *lineupAmiibo, i *lineupItem) (*amiibo,
 		DetailsURL:      detailsURL,
 		FigureURL:       figureURL,
 		Franchise:       franchise,
+		FranchiseID:     franchiseID,
 		GameCode:        game,
 		HexCode:         hex,
 		ID:              ID,
