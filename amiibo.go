@@ -261,35 +261,64 @@ func readAmiibo(fullpath string) (*amiibo, error) {
 	return unmarshalAmiibo(b)
 }
 
-func reduceAmiiboByCompleteness(a []*amiibo, complete bool) ([]*amiibo, error) {
+func reduceAmiibo(i int, a *[]*amiibo) {
+	(*a) = append((*a)[:(i-1)], ((*a)[i:])...)
+}
+
+func reduceAmiiboByCompleteness(c bool, a ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+		ok  bool
+	)
+	for _, a := range a {
+		ok = (a.Complete == c)
+		if !ok {
+			continue
+		}
+	}
+	return a, err
+}
+
+func reduceAmiiboByPresenter(p string, a ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+		i   = 0
+		n   = len(a)
+		ok  bool
+	)
+	for i < n {
+		ok = (p == a[i].PresentedBy)
+		if ok {
+			i = i + 1
+			continue
+		}
+		reduceAmiibo(i, &a)
+		i = (i - 1)
+		n = len(a)
+	}
+	return a, err
+}
+
+func reduceAmiiboByRelationship(r string, a ...*amiibo) ([]*amiibo, error) {
+	var (
+		err error
+		i   = 0
+		n   = len(a)
+	)
+	for i < n {
+
+	}
+	return a, err
+}
+
+func reduceAmiiboBySeries(s string, a ...*amiibo) ([]*amiibo, error) {
 	var (
 		err error
 	)
 	return a, err
 }
 
-func reduceAmiiboByPresenter(a []*amiibo, presenters ...string) ([]*amiibo, error) {
-	var (
-		err error
-	)
-	return a, err
-}
-
-func reduceAmiiboByRelationship(a []*amiibo, relationship ...string) ([]*amiibo, error) {
-	var (
-		err error
-	)
-	return a, err
-}
-
-func reduceAmiiboBySeries(a []*amiibo, series ...string) ([]*amiibo, error) {
-	var (
-		err error
-	)
-	return a, err
-}
-
-func reduceAmiiboByType(a []*amiibo, types ...string) ([]*amiibo, error) {
+func reduceAmiiboByType(t string, a ...*amiibo) ([]*amiibo, error) {
 	var (
 		err error
 	)
